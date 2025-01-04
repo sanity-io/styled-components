@@ -82,9 +82,9 @@ Typical render timings: mean ± standard deviations.
 | `goober`                   |       `02.90 ±00.67` |       `03.59 ±00.11` |           `746.07 ±435.17` |
 | `inline-styles`            |       `03.72 ±00.20` |       `05.35 ±00.15` |             `01.24 ±00.37` |
 | `react-native-web`         |       `03.15 ±00.27` |       `04.65 ±00.43` |             `01.33 ±00.18` |
-| `styled-components-object` |                    - |                    - |                          - |
-| `styled-components-v5`     |                    - |                    - |                          - |
-| `styled-components-v6`     |                    - |                    - |                          - |
-| `styled-components`        |                    - |                    - |                          - |
+| `styled-components-object` |       `02.89 ±00.59` |       `03.81 ±00.24` |                          - |
+| `styled-components-v5`     |       `02.60 ±00.57` |       `03.31 ±00.15` |             `01.81 ±00.56` |
+| `styled-components-v6`     |       `02.33 ±00.11` |       `03.13 ±00.12` |             `01.54 ±00.51` |
+| `styled-components`        |       `02.30 ±00.28` |       `03.08 ±00.13` |             `01.02 ±00.31` |
 | `styled-jsx`               |                    - |                    - |                          - |
 | `styletron-react`          |                    - |                    - |                          - |
