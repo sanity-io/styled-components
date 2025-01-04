@@ -86,5 +86,5 @@ Typical render timings: mean ± standard deviations.
 | `styled-components-v5`     |       `02.60 ±00.57` |       `03.31 ±00.15` |             `01.81 ±00.56` |
 | `styled-components-v6`     |       `02.33 ±00.11` |       `03.13 ±00.12` |             `01.54 ±00.51` |
 | `styled-components`        |       `02.30 ±00.28` |       `03.08 ±00.13` |             `01.02 ±00.31` |
-| `styled-jsx`               |                    - |                    - |                          - |
-| `styletron-react`          |                    - |                    - |                          - |
+| `styled-jsx`               |       `03.11 ±00.33` |       `05.01 ±00.59` |             `01.67 ±00.58` |
+| `styletron-react`          |       `03.20 ±00.24` |       `04.40 ±00.16` |             `01.89 ±00.62` |
