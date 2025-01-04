@@ -68,3 +68,24 @@ Typical render timings: mean ± standard deviations.
 | `css-modules`            |     `98.24` `±20.26` |    `143.75` `±25.50` |                   - |
 | `react-native-web@0.4.0` |    `131.46` `±18.96` |    `174.70` `±14.88` |    `60.87` `±06.32` |
 | `inline-styles`          |    `184.58` `±26.23` |    `273.86` `±26.23` |    `30.28` `±07.44` |
+
+### MacBook Pro (2025)
+
+MacBook Pro (16-inch, Late 2024); 16-core M4 Max; 128 GB LPDDR5 RAM. Google Chrome 131.
+
+Typical render timings: mean ± standard deviations.
+
+| Implementation             | Mount deep tree (ms) | Mount wide tree (ms) | Update dynamic styles (ms) |
+| :------------------------- | -------------------: | -------------------: | -------------------------: |
+| `aphrodite`                |                    - |                    - |                          - |
+| `css-modules`              |                    - |                    - |                          - |
+| `emotion`                  |                    - |                    - |                          - |
+| `goober`                   |                    - |                    - |                          - |
+| `inline-styles`            |                    - |                    - |                          - |
+| `react-native-web`         |                    - |                    - |                          - |
+| `styled-components-object` |                    - |                    - |                          - |
+| `styled-components-v5`     |                    - |                    - |                          - |
+| `styled-components-v6`     |                    - |                    - |                          - |
+| `styled-components`        |                    - |                    - |                          - |
+| `styled-jsx`               |                    - |                    - |                          - |
+| `styletron-react`          |                    - |                    - |                          - |
