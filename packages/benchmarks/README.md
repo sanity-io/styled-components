@@ -77,9 +77,8 @@ Typical render timings: mean ± standard deviations.
 
 | Implementation             | Mount deep tree (ms) | Mount wide tree (ms) | Update dynamic styles (ms) |
 | :------------------------- | -------------------: | -------------------: | -------------------------: |
-| `aphrodite`                |                    - |                    - |                          - |
-| `css-modules`              |                    - |                    - |                          - |
-| `emotion`                  |                    - |                    - |                          - |
+| `aphrodite`                |       `02.41 ±00.75` |       `02.68 ±00.10` |             `00.91 ±00.38` |
+| `emotion`                  |       `03.29 ±00.71` |       `04.66 ±00.81` |             `01.95 ±00.67` |
 | `goober`                   |                    - |                    - |                          - |
 | `inline-styles`            |                    - |                    - |                          - |
 | `react-native-web`         |                    - |                    - |                          - |
