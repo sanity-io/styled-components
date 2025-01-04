@@ -101,6 +101,6 @@ After upgrading to React 19 and using ReactDOM.createRoot:
 | `styled-components-object` |       `02.71 ±00.52` |       `03.69 ±00.30` |                          - |
 | `styled-components-v5`     |       `02.50 ±00.58` |       `03.12 ±00.15` |             `01.68 ±00.51` |
 | `styled-components-v6`     |       `02.39 ±00.70` |       `02.89 ±00.12` |             `01.42 ±00.49` |
-| `styled-components`        |       `02.34 ±00.59` |       `02.88 ±00.11` |             `01.35 ±00.48` |
+| `styled-components`        |       `02.38 ±00.62` |       `02.89 ±00.12` |             `01.50 ±00.44` |
 | `styled-jsx`               |                      |                      |                            |
 | `styletron-react`          |                      |                      |                            |
