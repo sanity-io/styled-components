@@ -1,10 +1,11 @@
 import { withStyle } from 'styletron-react';
-import View from './View';
+import type { ImplementationBoxProps } from '../../types';
+import { View } from './View';
 
-const Box = withStyle(
+export const Box = withStyle(
   View,
-  ({ color, fixed = false, layout = 'column', outer = false, ...other }) => ({
-    ...styles[`color${color}`],
+  ({ color, fixed = false, layout = 'column', outer = false }: ImplementationBoxProps) => ({
+    ...(typeof color === 'number' && styles[`color${color}`]),
     ...(fixed && styles.fixed),
     ...(layout === 'row' && styles.row),
     ...(outer && styles.outer),
@@ -41,6 +42,4 @@ const styles = {
     width: '6px',
     height: '6px',
   },
-};
-
-export default Box;
+} as const;

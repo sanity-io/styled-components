@@ -1,3 +1,5 @@
-import View from './View';
+import { View } from './View';
 
-export default View;
+export function Provider({ children }: { children: React.ReactNode }) {
+  return <View>{children}</View>;
+}

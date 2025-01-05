@@ -1,7 +1,7 @@
-import styled from 'styled-components-use-insertion-effect';
-import View from './View';
+import { styled } from 'styled-components-use-insertion-effect';
+import { View } from './View';
 
-const Dot = styled(View).attrs(p => ({ style: { borderBottomColor: p.color } }))`
+export const Dot = styled(View).attrs(p => ({ style: { borderBottomColor: p.color } }))`
   position: absolute;
   cursor: pointer;
   width: 0;
@@ -16,5 +16,3 @@ const Dot = styled(View).attrs(p => ({ style: { borderBottomColor: p.color } }))
   border-bottom-width: ${props => `${props.size / 2}px`};
   border-left-width: ${props => `${props.size / 2}px`};
 `;
-
-export default Dot;

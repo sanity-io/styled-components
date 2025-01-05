@@ -2035,7 +2035,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/types@npm:^7.23.6, @babel/types@npm:^7.25.8, @babel/types@npm:^7.25.9, @babel/types@npm:^7.26.0, @babel/types@npm:^7.26.3":
+"@babel/types@npm:^7.19.0, @babel/types@npm:^7.23.6, @babel/types@npm:^7.25.8, @babel/types@npm:^7.25.9, @babel/types@npm:^7.26.0, @babel/types@npm:^7.26.3":
   version: 7.26.3
   resolution: "@babel/types@npm:7.26.3"
   dependencies:
@@ -3967,7 +3967,9 @@ __metadata:
     "@types/react-native": "npm:0.69.26"
     "@vitejs/plugin-react": "npm:^4.3.4"
     autoprefixer: "npm:10.4.20"
+    babel-plugin-react-compiler: "npm:beta"
     babel-plugin-react-native-web: "npm:0.19.13"
+    babel-plugin-styled-components: "npm:2.1.4"
     classnames: "npm:2.5.1"
     d3-scale-chromatic: "npm:1.5.0"
     eslint: "npm:^9.17.0"
@@ -3990,7 +3992,7 @@ __metadata:
     styled-jsx: "npm:5.1.6"
     styletron-engine-atomic: "npm:1.6.2"
     styletron-react: "npm:6.1.1"
-    typescript: "npm:~5.6.2"
+    typescript: "npm:5.7.2"
     typescript-eslint: "npm:^8.19.0"
     vite: "npm:^6.0.7"
     vite-plugin-stylex: "npm:0.13.0"
@@ -5415,6 +5417,15 @@ __metadata:
   peerDependencies:
     "@babel/core": ^7.4.0 || ^8.0.0-0 <8.0.0
   checksum: bc541037cf7620bc84ddb75a1c0ce3288f90e7d2799c070a53f8a495c8c8ae0316447becb06f958dd25dcce2a2fce855d318ecfa48036a1ddb218d55aa38a744
+  languageName: node
+  linkType: hard
+
+"babel-plugin-react-compiler@npm:beta":
+  version: 19.0.0-beta-55955c9-20241229
+  resolution: "babel-plugin-react-compiler@npm:19.0.0-beta-55955c9-20241229"
+  dependencies:
+    "@babel/types": "npm:^7.19.0"
+  checksum: f0b20b45d514c727c4171fc158eb2693b848c7713db59c79bd54a43f427a7cd1193942df90de2e16ff027266454a6f53f519a792f066d237e9367593d9fdbc34
   languageName: node
   linkType: hard
 
@@ -13161,13 +13172,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:~5.6.2":
-  version: 5.6.3
-  resolution: "typescript@npm:5.6.3"
+"typescript@npm:5.7.2":
+  version: 5.7.2
+  resolution: "typescript@npm:5.7.2"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 44f61d3fb15c35359bc60399cb8127c30bae554cd555b8e2b46d68fa79d680354b83320ad419ff1b81a0bdf324197b29affe6cc28988cd6a74d4ac60c94f9799
+  checksum: a873118b5201b2ef332127ef5c63fb9d9c155e6fdbe211cbd9d8e65877283797cca76546bad742eea36ed7efbe3424a30376818f79c7318512064e8625d61622
   languageName: node
   linkType: hard
 
@@ -13181,13 +13192,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@npm%3A~5.6.2#optional!builtin<compat/typescript>":
-  version: 5.6.3
-  resolution: "typescript@patch:typescript@npm%3A5.6.3#optional!builtin<compat/typescript>::version=5.6.3&hash=e012d7"
+"typescript@patch:typescript@npm%3A5.7.2#optional!builtin<compat/typescript>":
+  version: 5.7.2
+  resolution: "typescript@patch:typescript@npm%3A5.7.2#optional!builtin<compat/typescript>::version=5.7.2&hash=e012d7"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: ac8307bb06bbfd08ae7137da740769b7d8c3ee5943188743bb622c621f8ad61d244767480f90fbd840277fbf152d8932aa20c33f867dea1bb5e79b187ca1a92f
+  checksum: c891ccf04008bc1305ba34053db951f8a4584b4a1bf2f68fd972c4a354df3dc5e62c8bfed4f6ac2d12e5b3b1c49af312c83a651048f818cd5b4949d17baacd79
   languageName: node
   linkType: hard
 

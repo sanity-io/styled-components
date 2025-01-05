@@ -1,11 +1,6 @@
 import { styled } from 'styletron-react';
 
-const View = styled('div', ({ style }) => ({
-  ...viewStyle,
-  style,
-}));
-
-const viewStyle = {
+export const View = styled('div', {
   alignItems: 'stretch',
   borderWidth: '0px',
   borderStyle: 'solid',
@@ -20,6 +15,4 @@ const viewStyle = {
   // fix flexbox bugs
   minHeight: '0px',
   minWidth: '0px',
-};
-
-export default View;
+});

@@ -1,13 +1,12 @@
 import { interpolateBuPu, interpolatePurples, interpolateRdPu } from 'd3-scale-chromatic';
 import React from 'react';
 import { BenchmarkType } from '../app/Benchmark';
+import type { ImplementationComponents } from '../types';
 
 const targetSize = 10;
 
 type ISierpinskiTriangle = {
-  components: {
-    Dot: React.FC<any>;
-  };
+  components: ImplementationComponents;
   depth: number;
   renderCount: number;
   s: number;

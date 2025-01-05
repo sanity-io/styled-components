@@ -11,6 +11,7 @@ import { defineConfig } from 'vite';
 export default defineConfig({
   define: {
     __VERSION__: JSON.stringify('benchmark'),
+    'process.env.SC_DISABLE_SPEEDY': JSON.stringify('false'),
   },
   resolve: {
     alias: {
@@ -23,6 +24,7 @@ export default defineConfig({
         plugins: [
           'babel-plugin-react-native-web',
           ['styled-jsx/babel', { optimizeForSpeed: true }],
+          ['babel-plugin-react-compiler', { target: '19' }],
         ],
         // presets: [[reactStrictDomPreset, { debug: true, dev: true }]],
       },

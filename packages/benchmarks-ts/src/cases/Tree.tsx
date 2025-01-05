@@ -1,18 +1,9 @@
 import { BenchmarkType } from '../app/Benchmark';
-
-interface IBox {
-  children?: React.ReactNode;
-  color?: number;
-  layout?: 'column' | 'row';
-  outer?: boolean;
-  fixed?: boolean;
-}
+import type { ImplementationComponents } from '../types';
 
 interface ITree {
   breadth: number;
-  components: {
-    Box: React.ComponentType<IBox>;
-  };
+  components: ImplementationComponents;
   depth: number;
   id: number;
   wrap: number;
@@ -22,8 +13,8 @@ export default function Tree({ breadth, components, depth, id, wrap }: ITree) {
   const { Box } = components;
 
   let result = (
-    <Box color={id % 3} layout={depth % 2 === 0 ? 'column' : 'row'} outer>
-      {depth === 0 && <Box color={(id % 3) + 3} fixed />}
+    <Box color={(id % 3) as 0 | 1 | 2} layout={depth % 2 === 0 ? 'column' : 'row'} outer>
+      {depth === 0 && <Box color={((id % 3) + 3) as 3 | 4 | 5} fixed />}
       {depth !== 0 &&
         Array.from({ length: breadth }).map((el, i) => (
           <Tree

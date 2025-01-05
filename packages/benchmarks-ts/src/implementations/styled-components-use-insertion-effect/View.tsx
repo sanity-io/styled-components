@@ -1,6 +1,6 @@
-import styled from 'styled-components-use-insertion-effect';
+import { styled } from 'styled-components-use-insertion-effect';
 
-export default styled.div`
+export const View = styled.div`
   align-items: stretch;
   border-width: 0;
   border-style: solid;

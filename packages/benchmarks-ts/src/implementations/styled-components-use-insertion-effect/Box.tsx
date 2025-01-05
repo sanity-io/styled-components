@@ -1,5 +1,5 @@
-import styled from 'styled-components-use-insertion-effect';
-import View from './View';
+import { styled } from 'styled-components-use-insertion-effect';
+import { View } from './View';
 
 const getColor = (color: number) => {
   switch (color) {
@@ -20,12 +20,10 @@ const getColor = (color: number) => {
   }
 };
 
-const Box = styled(View)`
+export const Box = styled(View)`
   align-self: flex-start;
   flex-direction: ${props => (props.layout === 'column' ? 'column' : 'row')};
   padding: ${props => (props.outer ? '4px' : '0')};
   ${props => props.fixed && 'height:6px;'} ${props =>
     props.fixed && 'width:6px;'} background-color: ${props => getColor(props.color)};
 `;
-
-export default Box;
