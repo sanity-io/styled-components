@@ -3793,17 +3793,31 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@styled-components/benchmarks-ts@workspace:packages/benchmarks-ts"
   dependencies:
+    "@emotion/react": "npm:11.14.0"
+    "@emotion/styled": "npm:11.14.0"
     "@eslint/js": "npm:^9.17.0"
     "@types/react": "npm:^19.0.2"
     "@types/react-dom": "npm:^19.0.2"
     "@vitejs/plugin-react": "npm:^4.3.4"
+    babel-plugin-react-native-web: "npm:0.19.13"
+    classnames: "npm:2.5.1"
+    d3-scale-chromatic: "npm:3.1.0"
     eslint: "npm:^9.17.0"
     eslint-plugin-react-hooks: "npm:^5.1.0"
     eslint-plugin-react-refresh: "npm:^0.4.16"
     globals: "npm:^15.14.0"
+    goober: "npm:2.1.16"
     react: "npm:19.0.0"
     react-dom: "npm:19.0.0"
     react-is: "npm:19.0.0"
+    react-native-web: "npm:0.19.13"
+    styled-components: "workspace:*"
+    styled-components-use-insertion-effect: "npm:@sanity/styled-components@6.1.13"
+    styled-components-v5: "npm:styled-components@5.3.11"
+    styled-components-v6: "npm:styled-components@6.1.13"
+    styled-jsx: "npm:5.1.6"
+    styletron-engine-atomic: "npm:1.6.2"
+    styletron-react: "npm:6.1.1"
     typescript: "npm:~5.6.2"
     typescript-eslint: "npm:^8.19.0"
     vite: "npm:^6.0.7"
@@ -6064,12 +6078,28 @@ __metadata:
   languageName: node
   linkType: hard
 
+"d3-color@npm:1 - 3":
+  version: 3.1.0
+  resolution: "d3-color@npm:3.1.0"
+  checksum: a4e20e1115fa696fce041fbe13fbc80dc4c19150fa72027a7c128ade980bc0eeeba4bcf28c9e21f0bce0e0dbfe7ca5869ef67746541dcfda053e4802ad19783c
+  languageName: node
+  linkType: hard
+
 "d3-interpolate@npm:1":
   version: 1.4.0
   resolution: "d3-interpolate@npm:1.4.0"
   dependencies:
     d3-color: "npm:1"
   checksum: 33274a06d5969f7cf8477f490dd9bea6cf2f5e89da800e0db17e1b6663dfcc288ebc34ae85f891e83f59f87086e9468db0614281b9fe8ba50162d8a45149ed0f
+  languageName: node
+  linkType: hard
+
+"d3-interpolate@npm:1 - 3":
+  version: 3.0.1
+  resolution: "d3-interpolate@npm:3.0.1"
+  dependencies:
+    d3-color: "npm:1 - 3"
+  checksum: 19f4b4daa8d733906671afff7767c19488f51a43d251f8b7f484d5d3cfc36c663f0a66c38fe91eee30f40327443d799be17169f55a293a3ba949e84e57a33e6a
   languageName: node
   linkType: hard
 
@@ -6080,6 +6110,16 @@ __metadata:
     d3-color: "npm:1"
     d3-interpolate: "npm:1"
   checksum: 162e63d95ff67f5c50ca55d47c172dfbc2eb0dcb437121fd8256961d747c7a10206b45b1789e7abe51f30a40295c216b78a9ccc06f74d89ef52197417a40811c
+  languageName: node
+  linkType: hard
+
+"d3-scale-chromatic@npm:3.1.0":
+  version: 3.1.0
+  resolution: "d3-scale-chromatic@npm:3.1.0"
+  dependencies:
+    d3-color: "npm:1 - 3"
+    d3-interpolate: "npm:1 - 3"
+  checksum: 9a3f4671ab0b971f4a411b42180d7cf92bfe8e8584e637ce7e698d705e18d6d38efbd20ec64f60cc0dfe966c20d40fc172565bc28aaa2990c0a006360eed91af
   languageName: node
   linkType: hard
 
@@ -12170,6 +12210,27 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"styled-components-use-insertion-effect@npm:@sanity/styled-components@6.1.13":
+  version: 6.1.13
+  resolution: "@sanity/styled-components@npm:6.1.13"
+  dependencies:
+    "@emotion/is-prop-valid": "npm:1.2.2"
+    "@emotion/unitless": "npm:0.8.1"
+    "@emotion/use-insertion-effect-with-fallbacks": "npm:1.0.1"
+    "@types/stylis": "npm:4.2.5"
+    css-to-react-native: "npm:3.2.0"
+    csstype: "npm:3.1.3"
+    postcss: "npm:8.4.38"
+    shallowequal: "npm:1.1.0"
+    stylis: "npm:4.3.2"
+    tslib: "npm:2.6.2"
+  peerDependencies:
+    react: ">= 16.8.0"
+    react-dom: ">= 16.8.0"
+  checksum: 25f400425201e099bf4c85994f3596d8eb1507afc22a32e2ac5e17b03d3001d1c52be73508a002e18b77730aabd294d1b6d07fb034af4780d51c24da0eef217d
+  languageName: node
+  linkType: hard
+
 "styled-components-v5@npm:styled-components@5.3.11":
   version: 5.3.11
   resolution: "styled-components@npm:5.3.11"
@@ -12189,6 +12250,26 @@ __metadata:
     react-dom: ">= 16.8.0"
     react-is: ">= 16.8.0"
   checksum: 90b73479770c5d68e22e6366d210119d7203154a3e49dc828f6f6b4c2d5c077f7548210dfddd0af3cb15b0b63fab3eec8dc995c1734e97a313a9b83ba893668e
+  languageName: node
+  linkType: hard
+
+"styled-components-v6@npm:styled-components@6.1.13":
+  version: 6.1.13
+  resolution: "styled-components@npm:6.1.13"
+  dependencies:
+    "@emotion/is-prop-valid": "npm:1.2.2"
+    "@emotion/unitless": "npm:0.8.1"
+    "@types/stylis": "npm:4.2.5"
+    css-to-react-native: "npm:3.2.0"
+    csstype: "npm:3.1.3"
+    postcss: "npm:8.4.38"
+    shallowequal: "npm:1.1.0"
+    stylis: "npm:4.3.2"
+    tslib: "npm:2.6.2"
+  peerDependencies:
+    react: ">= 16.8.0"
+    react-dom: ">= 16.8.0"
+  checksum: dd0379179c6ce9655c97285e9f6475b533d4cc4cad72e8f16824c5454803a9d12126877d8b2837cd5b54520250c55cde97a183e813eed720d2575362d9646663
   languageName: node
   linkType: hard
 
