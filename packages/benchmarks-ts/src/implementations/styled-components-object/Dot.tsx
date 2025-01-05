@@ -1,7 +1,10 @@
 import styled from 'styled-components';
-import View from './View';
+import type { DotProps } from '../../types';
+import { View } from './View';
 
-export default styled(View).attrs(p => ({ style: { borderBottomColor: p.color } }))(p => ({
+export const Dot = styled(View).attrs(p => ({
+  style: { borderBottomColor: p.color },
+}))<DotProps>(props => ({
   borderBottomWidth: `${props.size / 2}px`,
   borderColor: 'transparent',
   borderLeftWidth: `${props.size / 2}px`,

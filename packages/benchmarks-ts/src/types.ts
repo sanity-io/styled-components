@@ -1,34 +1,45 @@
-export interface ImplementationBoxProps {
+export type BoxColor = 0 | 1 | 2 | 3 | 4 | 5;
+
+export interface BoxProps {
   children?: React.ReactNode;
-  color?: 0 | 1 | 2 | 3 | 4 | 5;
-  layout?: 'column' | 'row';
-  outer?: boolean;
-  fixed?: boolean;
+  $color?: BoxColor;
+  $layout?: 'column' | 'row';
+  $outer?: boolean;
+  $fixed?: boolean;
 }
-export interface ImplementationDotProps {
-  color: string;
-  size: number;
-  x: number;
-  y: number;
+export interface DotProps {
+  $color: string;
+  $size: number;
+  $x: number;
+  $y: number;
 }
-export interface ImplementationProviderProps {
+export interface ProviderProps {
   children: React.ReactNode;
 }
-export interface ImplementationViewProps {
+export interface ViewProps {
   children: React.ReactNode;
 }
 
 export interface ImplementationComponents {
-  Box: React.ComponentType<ImplementationBoxProps>;
-  Dot: React.ComponentType<ImplementationDotProps>;
-  Provider: React.ComponentType<ImplementationProviderProps>;
-  View: React.ComponentType<ImplementationViewProps>;
+  Box: React.ComponentType<BoxProps>;
+  Dot: React.ComponentType<DotProps>;
+  Provider: React.ComponentType<ProviderProps>;
+  View: React.ComponentType<ViewProps>;
 }
 
 export interface Implementation {
   components: ImplementationComponents;
   name: string;
   version: string;
+}
+
+export interface SierpinskiTriangleProps {
+  components: ImplementationComponents;
+  depth: number;
+  renderCount: number;
+  s: number;
+  x: number;
+  y: number;
 }
 
 /**

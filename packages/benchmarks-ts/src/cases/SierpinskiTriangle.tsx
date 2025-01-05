@@ -1,18 +1,9 @@
 import { interpolateBuPu, interpolatePurples, interpolateRdPu } from 'd3-scale-chromatic';
 import React from 'react';
 import { BenchmarkType } from '../app/Benchmark';
-import type { ImplementationComponents } from '../types';
+import type { SierpinskiTriangleProps } from '../types';
 
 const targetSize = 10;
-
-type ISierpinskiTriangle = {
-  components: ImplementationComponents;
-  depth: number;
-  renderCount: number;
-  s: number;
-  x: number;
-  y: number;
-};
 
 export default function SierpinskiTriangle({
   components,
@@ -21,7 +12,7 @@ export default function SierpinskiTriangle({
   y,
   depth = 0,
   renderCount = 0,
-}: ISierpinskiTriangle) {
+}: SierpinskiTriangleProps) {
   const { Dot } = components;
 
   if (Dot) {

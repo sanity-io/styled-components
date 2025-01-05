@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export default styled.div({
+export const View = styled.div({
   alignItems: 'stretch',
   borderStyle: 'solid',
   borderWidth: 0,

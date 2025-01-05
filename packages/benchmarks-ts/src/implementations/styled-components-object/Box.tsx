@@ -1,7 +1,8 @@
 import styled from 'styled-components';
-import View from './View';
+import type { BoxColor, BoxProps } from '../../types';
+import { View } from './View';
 
-const getColor = color => {
+const getColor = (color?: BoxColor) => {
   switch (color) {
     case 0:
       return '#14171A';
@@ -20,7 +21,7 @@ const getColor = color => {
   }
 };
 
-export default styled(View)(p => ({
+export const Box = styled(View)<BoxProps>(p => ({
   alignSelf: 'flex-start',
   backgroundColor: getColor(p.color),
   flexDirection: p.layout === 'column' ? 'column' : 'row',
