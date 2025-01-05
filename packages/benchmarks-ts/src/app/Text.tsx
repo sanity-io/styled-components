@@ -1,5 +1,5 @@
 import React, { createContext, use } from 'react';
-import { StyleSheet, Text, type StyleProp, type TextStyle } from 'react-native';
+import { Text as NativeText, StyleSheet, type StyleProp, type TextStyle } from 'react-native';
 import { colors } from './theme';
 
 const styles = StyleSheet.create({
@@ -14,20 +14,25 @@ const styles = StyleSheet.create({
 
 const IsAParentTextContext = createContext(false);
 
-export default function AppText(props: {
+export function Text(props: {
   children: React.ReactNode;
-  style: StyleProp<TextStyle>;
+  numberOfLines?: number;
+  style?: StyleProp<TextStyle>;
   testID?: string;
 }) {
-  const { children, style, testID } = props;
+  const { children, style, numberOfLines, testID } = props;
   const isInAParentText = use(IsAParentTextContext);
   return (
     <IsAParentTextContext value={true}>
-      <Text style={[!isInAParentText && styles.baseText, style]} testID={testID}>
+      <NativeText
+        numberOfLines={numberOfLines}
+        style={[!isInAParentText && styles.baseText, style]}
+        testID={testID}
+      >
         {children}
-      </Text>
+      </NativeText>
     </IsAParentTextContext>
   );
 }
 
-AppText.displayName = '@app/Text';
+Text.displayName = '@app/Text';

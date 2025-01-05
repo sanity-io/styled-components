@@ -1,32 +1,36 @@
-import { Component } from 'react';
 import { StyleSheet, Text, TouchableHighlight } from 'react-native';
 
-export default class Button extends Component {
-  static displayName = '@app/Button';
+export function Button(props: {
+  accessibilityLabel: string;
+  color: string;
+  disabled: boolean;
+  onPress: () => void;
+  style: any;
+  textStyle: any;
+  testID: string;
+  title: string;
+}) {
+  const { accessibilityLabel, color, disabled, onPress, style, textStyle, testID, title } = props;
 
-  render() {
-    const { accessibilityLabel, color, disabled, onPress, style, textStyle, testID, title } =
-      this.props;
-
-    return (
-      <TouchableHighlight
-        accessibilityLabel={accessibilityLabel}
-        accessibilityRole="button"
-        disabled={disabled}
-        onPress={onPress}
-        style={[
-          styles.button,
-          style,
-          color && { backgroundColor: color },
-          disabled && styles.buttonDisabled,
-        ]}
-        testID={testID}
-      >
-        <Text style={[styles.text, textStyle, disabled && styles.textDisabled]}>{title}</Text>
-      </TouchableHighlight>
-    );
-  }
+  return (
+    <TouchableHighlight
+      accessibilityLabel={accessibilityLabel}
+      accessibilityRole="button"
+      disabled={disabled}
+      onPress={onPress}
+      style={[
+        styles.button,
+        style,
+        color && { backgroundColor: color },
+        disabled && styles.buttonDisabled,
+      ]}
+      testID={testID}
+    >
+      <Text style={[styles.text, textStyle, disabled && styles.textDisabled]}>{title}</Text>
+    </TouchableHighlight>
+  );
 }
+Button.displayName = '@app/Button';
 
 const styles = StyleSheet.create({
   button: {

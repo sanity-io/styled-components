@@ -1,55 +1,67 @@
-import React from 'react';
+import { memo } from 'react';
 import { StyleSheet, View } from 'react-native';
-import Text from './Text';
+import { Text } from './Text';
 
-const fmt = time => {
-  const i = Number(Math.round(time + 'e2') + 'e-2').toFixed(2);
+const fmt = (time: any) => {
+  const i: any = Number(
+    Math.round(
+      // @ts-expect-error - fix later
+      time + 'e2'
+    ) + 'e-2'
+  ).toFixed(2);
   return 10 / i > 1 ? `0${i}` : i;
 };
 
-export default class ReportCard extends React.PureComponent {
-  render() {
-    const {
-      benchmarkName,
-      libraryName,
-      sampleCount,
-      mean,
-      meanLayout,
-      meanScripting,
-      stdDev,
-      libraryVersion,
-    } = this.props;
+export const ReportCard = memo(function ReportCard(props: {
+  benchmarkName: string;
+  libraryName: string;
+  sampleCount: number;
+  mean: number;
+  meanLayout: number;
+  meanScripting: number;
+  stdDev: number;
+  libraryVersion: string;
+}) {
+  const {
+    benchmarkName,
+    libraryName,
+    sampleCount,
+    mean,
+    meanLayout,
+    meanScripting,
+    stdDev,
+    libraryVersion,
+  } = props;
 
-    const sampleCountText = sampleCount != null ? `(${sampleCount})` : '';
+  const sampleCountText = sampleCount != null ? `(${sampleCount})` : '';
 
-    return (
-      <View style={styles.root}>
-        <View style={styles.left}>
-          <Text numberOfLines={1} style={styles.bold}>
-            {`${libraryName}${libraryVersion ? '@' + libraryVersion : ''}`}
-          </Text>
-          <Text numberOfLines={1}>
-            {benchmarkName} {sampleCountText}
-          </Text>
-        </View>
-        <View style={styles.right}>
-          {mean ? (
-            <View testID={benchmarkName + ' results'}>
-              <Text style={[styles.bold, styles.monoFont]}>
-                {fmt(mean)} ±{fmt(stdDev)} ms
-              </Text>
-              <Text style={[styles.smallText, styles.monoFont]}>
-                (S/L) {fmt(meanScripting)}/{fmt(meanLayout)} ms
-              </Text>
-            </View>
-          ) : (
-            <Text style={styles.bold}>In progress…</Text>
-          )}
-        </View>
+  return (
+    <View style={styles.root}>
+      <View style={styles.left}>
+        <Text numberOfLines={1} style={styles.bold}>
+          {`${libraryName}${libraryVersion ? '@' + libraryVersion : ''}`}
+        </Text>
+        <Text numberOfLines={1}>
+          {benchmarkName} {sampleCountText}
+        </Text>
       </View>
-    );
-  }
-}
+      <View style={styles.right}>
+        {mean ? (
+          <View testID={benchmarkName + ' results'}>
+            <Text style={[styles.bold, styles.monoFont]}>
+              {fmt(mean)} ±{fmt(stdDev)} ms
+            </Text>
+            <Text style={[styles.smallText, styles.monoFont]}>
+              (S/L) {fmt(meanScripting)}/{fmt(meanLayout)} ms
+            </Text>
+          </View>
+        ) : (
+          <Text style={styles.bold}>In progress…</Text>
+        )}
+      </View>
+    </View>
+  );
+});
 
 const styles = StyleSheet.create({
   root: {

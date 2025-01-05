@@ -1,11 +1,11 @@
 import { Component } from 'react';
 import { Picker, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import Benchmark from './Benchmark';
-import Button from './Button';
+import { Button } from './Button';
 import { IconClear, IconEye } from './Icons';
-import Layout from './Layout';
-import ReportCard from './ReportCard';
-import Text from './Text';
+import { Layout } from './Layout';
+import { ReportCard } from './ReportCard';
+import { Text } from './Text';
 import { colors } from './theme';
 
 const Overlay = () => <View style={[StyleSheet.absoluteFill, { zIndex: 2 }]} />;

@@ -1,45 +1,32 @@
-import { element } from 'prop-types';
-import { Component } from 'react';
+import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { colors } from './theme';
 
-export default class Layout extends Component {
-  static propTypes = {
-    actionPanel: element,
-    listPanel: element,
-    viewPanel: element,
-  };
+export function Layout(props: {
+  actionPanel: React.ReactNode;
+  listPanel: React.ReactNode;
+  viewPanel: React.ReactNode;
+}) {
+  const { viewPanel, actionPanel, listPanel } = props;
+  const [widescreen, setWidescreen] = useState(false);
 
-  state = {
-    widescreen: false,
-  };
-
-  render() {
-    const { viewPanel, actionPanel, listPanel } = this.props;
-    const { widescreen } = this.state;
-    return (
-      <View onLayout={this._handleLayout} style={[styles.root, widescreen && styles.row]}>
-        <View style={[widescreen ? styles.grow : styles.stackPanel, styles.layer]}>
-          {viewPanel}
-        </View>
-        <View style={styles.grow}>
-          <View style={[styles.grow, styles.layer]}>{listPanel}</View>
-          <View style={styles.divider} />
-          <View style={styles.layer}>{actionPanel}</View>
-        </View>
+  return (
+    <View
+      onLayout={({ nativeEvent }) => {
+        const { layout } = nativeEvent;
+        const { width } = layout;
+        setWidescreen(width >= 740);
+      }}
+      style={[styles.root, widescreen && styles.row]}
+    >
+      <View style={[widescreen ? styles.grow : styles.stackPanel, styles.layer]}>{viewPanel}</View>
+      <View style={styles.grow}>
+        <View style={[styles.grow, styles.layer]}>{listPanel}</View>
+        <View style={styles.divider} />
+        <View style={styles.layer}>{actionPanel}</View>
       </View>
-    );
-  }
-
-  _handleLayout = ({ nativeEvent }) => {
-    const { layout } = nativeEvent;
-    const { width } = layout;
-    if (width >= 740) {
-      this.setState(() => ({ widescreen: true }));
-    } else {
-      this.setState(() => ({ widescreen: false }));
-    }
-  };
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -63,6 +50,11 @@ const styles = StyleSheet.create({
     height: '33.33%',
   },
   layer: {
-    transform: [{ translateZ: '0' }],
+    transform: [
+      {
+        // @ts-expect-error - fix later
+        translateZ: '0',
+      },
+    ],
   },
 });
