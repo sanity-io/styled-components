@@ -53,7 +53,7 @@ export const colors = {
   faintGray: '#F5F8FA',
   white: '#FFF',
   textBlue: '#1B95E0',
-};
+} as const;
 
 export const fontFamilies = {
   normal: 'System',

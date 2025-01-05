@@ -3961,6 +3961,7 @@ __metadata:
     "@emotion/styled": "npm:11.14.0"
     "@eslint/js": "npm:^9.17.0"
     "@stylexjs/babel-plugin": "npm:0.10.0"
+    "@stylexjs/eslint-plugin": "npm:0.10.0"
     "@types/d3-scale-chromatic": "npm:3.1.0"
     "@types/react": "npm:^19.0.2"
     "@types/react-dom": "npm:^19.0.2"
@@ -4084,6 +4085,16 @@ __metadata:
     "@stylexjs/stylex": "npm:0.9.3"
     esm-resolve: "npm:^1.0.11"
   checksum: 037e1a665e7d5bbb3a80c5273dcf7781535c4cf685b939b2d56d6311f65057bc9b73e57cc6f0426aa1f4bd727a77837c43f40dd8fd9bbd5db438943f312df932
+  languageName: node
+  linkType: hard
+
+"@stylexjs/eslint-plugin@npm:0.10.0":
+  version: 0.10.0
+  resolution: "@stylexjs/eslint-plugin@npm:0.10.0"
+  dependencies:
+    css-shorthand-expand: "npm:^1.2.0"
+    micromatch: "npm:^4.0.5"
+  checksum: 3cc1d044cde41c73533d05e67e592dc05a0f98018f3c4fb4e0baf555616620274ef590f952f433d56a50145a5582bd35239983f46054d5aef5121b5b2f5a9460
   languageName: node
   linkType: hard
 
@@ -6312,6 +6323,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"css-color-names@npm:0.0.1":
+  version: 0.0.1
+  resolution: "css-color-names@npm:0.0.1"
+  checksum: 127f9950c5960c159833331777ffd3fe0bb4bce6afc333d213b04fe5867dbabd0a9861c98f586532d73f7cd50704f9e5d8e75b24984c08411b6cca522b9d8cce
+  languageName: node
+  linkType: hard
+
 "css-in-js-utils@npm:^2.0.0":
   version: 2.0.1
   resolution: "css-in-js-utils@npm:2.0.1"
@@ -6362,6 +6380,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"css-shorthand-expand@npm:^1.2.0":
+  version: 1.2.0
+  resolution: "css-shorthand-expand@npm:1.2.0"
+  dependencies:
+    css-color-names: "npm:0.0.1"
+    css-url-regex: "npm:0.0.1"
+    hex-color-regex: "npm:^1.0.1"
+    hsl-regex: "npm:^1.0.0"
+    hsla-regex: "npm:^1.0.0"
+    map-obj: "npm:^1.0.0"
+    repeat-element: "npm:^1.1.0"
+    rgb-regex: "npm:^1.0.1"
+    rgba-regex: "npm:^1.0.0"
+    xtend: "npm:^4.0.0"
+  checksum: 92653607be65525c5dfa3d1f6e303e63e240b3a5352efcba59ad560460163ad632ac80a787df0c0a792ebd08cae0472769c6b92e0fdc7d0c89d09e6b0f81cea7
+  languageName: node
+  linkType: hard
+
 "css-to-react-native@npm:3.2.0, css-to-react-native@npm:^3.0.0":
   version: 3.2.0
   resolution: "css-to-react-native@npm:3.2.0"
@@ -6370,6 +6406,13 @@ __metadata:
     css-color-keywords: "npm:^1.0.0"
     postcss-value-parser: "npm:^4.0.2"
   checksum: fde850a511d5d3d7c55a1e9b8ed26b69a8ad4868b3487e36ebfbfc0b96fc34bc977d9cd1d61a289d0c74d3f9a662d8cee297da53d4433bf2e27d6acdff8e1003
+  languageName: node
+  linkType: hard
+
+"css-url-regex@npm:0.0.1":
+  version: 0.0.1
+  resolution: "css-url-regex@npm:0.0.1"
+  checksum: 6a8f4618be01997653a4f28d25e3e3aa65bdffdf5b906bd892ab96544219a00f7cdfda905fd9658fcde68fdcb3772e4b26f3d88d5151aa96f03961629d687119
   languageName: node
   linkType: hard
 
@@ -7949,6 +7992,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"hex-color-regex@npm:^1.0.1":
+  version: 1.1.0
+  resolution: "hex-color-regex@npm:1.1.0"
+  checksum: 43f0b8bbeb3906b6b2ddfb5ce6cbc28fb4f1e7b5129d0485e006ea20f92dc65f97b3b12591dd6a993de2ca10cb64a16a6a380a37481fc09432e7be0037be8f9c
+  languageName: node
+  linkType: hard
+
 "hoist-non-react-statics@npm:^3.0.0, hoist-non-react-statics@npm:^3.3.1":
   version: 3.3.2
   resolution: "hoist-non-react-statics@npm:3.3.2"
@@ -7962,6 +8012,20 @@ __metadata:
   version: 2.8.9
   resolution: "hosted-git-info@npm:2.8.9"
   checksum: 317cbc6b1bbbe23c2a40ae23f3dafe9fa349ce42a89a36f930e3f9c0530c179a3882d2ef1e4141a4c3674d6faaea862138ec55b43ad6f75e387fda2483a13c70
+  languageName: node
+  linkType: hard
+
+"hsl-regex@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "hsl-regex@npm:1.0.0"
+  checksum: ddc29f4943c4a1768e611fadaebf6913d039640267f1fad2ac06f4dbdbe5cbe535d77dd19804898834671dd82751a4401c1b4d2ecade25d158ea23665d263e84
+  languageName: node
+  linkType: hard
+
+"hsla-regex@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "hsla-regex@npm:1.0.0"
+  checksum: 307874844a055af7a8f225e3908e1f7a2d96aa28e86abcb7ce1837cd86acf32d1f3c71ae105416d4c8623c8f9220b1bc799598851b0826274faa047710985f76
   languageName: node
   linkType: hard
 
@@ -9627,6 +9691,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"map-obj@npm:^1.0.0":
+  version: 1.0.1
+  resolution: "map-obj@npm:1.0.1"
+  checksum: ccca88395e7d38671ed9f5652ecf471ecd546924be2fb900836b9da35e068a96687d96a5f93dcdfa94d9a27d649d2f10a84595590f89a347fb4dda47629dcc52
+  languageName: node
+  linkType: hard
+
 "memoize-one@npm:^5.0.0":
   version: 5.2.1
   resolution: "memoize-one@npm:5.2.1"
@@ -9974,7 +10045,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"micromatch@npm:^4.0.2, micromatch@npm:^4.0.8":
+"micromatch@npm:^4.0.2, micromatch@npm:^4.0.5, micromatch@npm:^4.0.8":
   version: 4.0.8
   resolution: "micromatch@npm:4.0.8"
   dependencies:
@@ -11529,6 +11600,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"repeat-element@npm:^1.1.0":
+  version: 1.1.4
+  resolution: "repeat-element@npm:1.1.4"
+  checksum: 81aa8d82bc845780803ef52df3533fa399974b99df571d0bb86e91f0ffca9ee4b9c4e8e5e72af087938cc28d2aef93d106a6d01da685d72ce96455b90a9f9f69
+  languageName: node
+  linkType: hard
+
 "require-directory@npm:^2.1.1":
   version: 2.1.1
   resolution: "require-directory@npm:2.1.1"
@@ -11657,6 +11735,20 @@ __metadata:
   version: 1.0.4
   resolution: "reusify@npm:1.0.4"
   checksum: c19ef26e4e188f408922c46f7ff480d38e8dfc55d448310dfb518736b23ed2c4f547fb64a6ed5bdba92cd7e7ddc889d36ff78f794816d5e71498d645ef476107
+  languageName: node
+  linkType: hard
+
+"rgb-regex@npm:^1.0.1":
+  version: 1.0.1
+  resolution: "rgb-regex@npm:1.0.1"
+  checksum: ab43ea8b92c1e0c6d6bc811d7fff05927ae87473f9576363ae57213b1fd10605549a5cf89c79ccb7a02dd32e1f093c79891868ef31fd92cdb5378d7b180d73f5
+  languageName: node
+  linkType: hard
+
+"rgba-regex@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "rgba-regex@npm:1.0.0"
+  checksum: 4296e7dd41c0edf66c18c13824b746099af642e1b52de97addb6b22051398567090cf1df20bacd1d400cfc79aee6f3a428e0def623d358844495e3630189892c
   languageName: node
   linkType: hard
 
@@ -13846,7 +13938,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"xtend@npm:~4.0.1":
+"xtend@npm:^4.0.0, xtend@npm:~4.0.1":
   version: 4.0.2
   resolution: "xtend@npm:4.0.2"
   checksum: 366ae4783eec6100f8a02dff02ac907bf29f9a00b82ac0264b4d8b832ead18306797e283cf19de776538babfdcb2101375ec5646b59f08c52128ac4ab812ed0e

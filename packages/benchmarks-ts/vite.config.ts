@@ -1,4 +1,6 @@
 import react from '@vitejs/plugin-react';
+import { stylex } from 'vite-plugin-stylex-dev';
+
 // import { createRequire } from 'module';
 
 import { defineConfig } from 'vite';
@@ -19,6 +21,7 @@ export default defineConfig({
     },
   },
   plugins: [
+    stylex(),
     react({
       babel: {
         plugins: [

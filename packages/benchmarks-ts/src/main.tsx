@@ -1,3 +1,4 @@
+import 'virtual:stylex.css';
 import './index.css';
 
 import { StrictMode } from 'react';

@@ -33,15 +33,6 @@ export interface Implementation {
   version: string;
 }
 
-export interface SierpinskiTriangleProps {
-  components: ImplementationComponents;
-  depth: number;
-  renderCount: number;
-  s: number;
-  x: number;
-  y: number;
-}
-
 /**
  *  benchmarkType: 'mount',
     Component: Tree,
@@ -70,8 +61,25 @@ export interface SierpinskiTriangleProps {
     benchmarkType: 'update',
     Component: SierpinskiTriangle,
     getComponentProps: ({ cycle }) => {
-      return { components, s: 200, renderCount: cycle, x: 0, y: 0 };
+      return { components, renderCount: cycle, s: 200, x: 0, y: 0 };
     },
     Provider: components.Provider,
     sampleCount: 1000,
  */
+
+export interface SierpinskiTriangleProps {
+  components: ImplementationComponents;
+  depth: number;
+  renderCount: number;
+  s: number;
+  x: number;
+  y: number;
+}
+
+export interface TreeProps {
+  components: ImplementationComponents;
+  breadth: number;
+  depth: number;
+  id: number;
+  wrap: number;
+}

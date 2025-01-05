@@ -1,5 +1,4 @@
 import { interpolateBuPu, interpolatePurples, interpolateRdPu } from 'd3-scale-chromatic';
-import React from 'react';
 import { BenchmarkType } from '../app/Benchmark';
 
 const targetSize = 10;
@@ -48,7 +47,7 @@ export default function SierpinskiTriangle({
     s /= 2;
 
     return (
-      <React.Fragment>
+      <>
         <SierpinskiTriangle
           components={components}
           depth={1}
@@ -73,7 +72,7 @@ export default function SierpinskiTriangle({
           x={x + s}
           y={y + s / 2}
         />
-      </React.Fragment>
+      </>
     );
   } else {
     return <span style={{ color: 'white' }}>No implementation available</span>;
