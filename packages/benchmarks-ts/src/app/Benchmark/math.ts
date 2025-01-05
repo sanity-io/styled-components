@@ -1,4 +1,4 @@
-export const getStdDev = values => {
+export const getStdDev = (values: number[]) => {
   const avg = getMean(values);
 
   const squareDiffs = values.map(value => {
@@ -9,12 +9,12 @@ export const getStdDev = values => {
   return Math.sqrt(getMean(squareDiffs));
 };
 
-export const getMean = values => {
+export const getMean = (values: number[]) => {
   const sum = values.reduce((sum, value) => sum + value, 0);
   return sum / values.length;
 };
 
-export const getMedian = values => {
+export const getMedian = (values: number[]) => {
   if (values.length === 1) {
     return values[0];
   }

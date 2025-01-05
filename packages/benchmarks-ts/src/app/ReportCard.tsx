@@ -7,7 +7,7 @@ const fmt = time => {
   return 10 / i > 1 ? `0${i}` : i;
 };
 
-class ReportCard extends React.PureComponent {
+export default class ReportCard extends React.PureComponent {
   render() {
     const {
       benchmarkName,
@@ -78,5 +78,3 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
 });
-
-export default ReportCard;

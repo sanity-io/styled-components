@@ -4,10 +4,6 @@
  * https://github.com/paularmstrong/react-component-benchmark
  */
 
-/* global $Values */
-/**
- * @flow
- */
 import React from 'react';
 import { getMean, getMedian, getStdDev } from './math';
 import * as Timing from './timing';

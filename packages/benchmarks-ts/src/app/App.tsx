@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
 import { Picker, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 import Benchmark from './Benchmark';
 import Button from './Button';
@@ -10,7 +10,7 @@ import { colors } from './theme';
 
 const Overlay = () => <View style={[StyleSheet.absoluteFill, { zIndex: 2 }]} />;
 
-export default class App extends Component {
+export class App extends Component {
   static displayName = '@app/App';
 
   constructor(props, context) {
@@ -129,7 +129,7 @@ export default class App extends Component {
 
             <Provider>
               {status === 'running' ? (
-                <React.Fragment>
+                <>
                   <View ref={this._setBenchWrapperRef}>
                     <Benchmark
                       component={Component}
@@ -146,7 +146,7 @@ export default class App extends Component {
                       type={Component.benchmarkType}
                     />
                   </View>
-                </React.Fragment>
+                </>
               ) : (
                 <Component {...getComponentProps({ cycle: 10 })} />
               )}
