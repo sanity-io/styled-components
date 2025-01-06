@@ -101,9 +101,9 @@ After upgrading to React 19 and using ReactDOM.createRoot, refactoring away from
 | `react-native-web`                       |       `03.17 ±00.40` |       `04.24 ±00.43` |             `00.91 ±00.39` |
 | `restyle`                                |       `13.49 ±01.37` |       `21.07 ±00.99` |             `01.95 ±01.04` |
 | `styled-components-object`               |       `02.93 ±00.52` |       `04.38 ±00.34` |             `01.01 ±00.33` |
-| `styled-components-use-insertion-effect` |       `02.73 ±00.77` |       `03.24 ±00.20` |             `00.88 ±00.26` |
+| `styled-components-use-insertion-effect` |       `02.50 ±00.76` |       `02.85 ±00.15` |             `00.79 ±00.23` |
 | `styled-components-v5`                   |       `02.65 ±00.75` |       `03.30 ±00.17` |             `00.82 ±00.30` |
-| `styled-components-v6`                   |       `02.70 ±00.81` |       `03.06 ±00.16` |             `00.79 ±00.30` |
-| `styled-components`                      |       `02.68 ±00.74` |       `03.35 ±00.14` |             `00.86 ±00.27` |
+| `styled-components-v6`                   |       `02.50 ±00.72` |       `02.77 ±00.25` |             `00.79 ±00.27` |
+| `styled-components`                      |       `02.45 ±00.61` |       `03.04 ±00.27` |             `00.73 ±00.31` |
 | `styled-jsx`                             |       `02.83 ±00.47` |       `04.32 ±00.45` |             `00.85 ±00.25` |
 | `styletron-react`                        |       `03.02 ±00.63` |       `04.94 ±00.15` |             `02.12 ±01.00` |
