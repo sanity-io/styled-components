@@ -8,7 +8,7 @@ export const Dot = styled(View)<DotProps>`
   width: 0;
   height: 0;
   border-color: transparent;
-  border-bottom-color: ${p => p.color};
+  border-bottom-color: ${p => p.$color};
   border-style: solid;
   border-top-width: 0;
   transform: translate(50%, 50%);
