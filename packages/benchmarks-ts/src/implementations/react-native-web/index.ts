@@ -1,12 +1,13 @@
 import { View } from 'react-native';
 import type { ImplementationComponents } from '../../types';
-import Box from './Box';
-import Dot from './Dot';
-import Provider from './Provider';
+import { Box } from './Box';
+import { Dot } from './Dot';
 
 export default {
   Box,
   Dot,
-  Provider,
+  // @ts-expect-error - fix later
+  Provider: View,
+  // @ts-expect-error - fix later
   View,
 } satisfies ImplementationComponents;

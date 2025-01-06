@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
-import View from './View';
+import type { BoxProps } from '../../types';
+import { View } from './View';
 
 const styles = {
   outer: {
@@ -33,17 +34,10 @@ const styles = {
   },
 };
 
-const Box = styled(View)(
-  p => styles[`color${p.color}`],
-  p => p.fixed && styles.fixed,
-  p => p.layout === 'row' && styles.row,
-  p => p.outer && styles.outer
+// @ts-expect-error - fix later
+export const Box = styled(View)(
+  (p: BoxProps) => typeof p.$color === 'number' && styles[`color${p.$color}`],
+  (p: BoxProps) => p.$fixed && styles.fixed,
+  (p: BoxProps) => p.$layout === 'row' && styles.row,
+  (p: BoxProps) => p.$outer && styles.outer
 );
-
-Box.defaultProps = {
-  fixed: false,
-  layout: 'column',
-  outer: false,
-};
-
-export default Box;

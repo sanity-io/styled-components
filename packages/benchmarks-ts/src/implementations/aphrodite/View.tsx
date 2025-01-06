@@ -1,5 +1,4 @@
 import { css, StyleSheet } from 'aphrodite/no-important';
-import React from 'react';
 
 const baseStyles = StyleSheet.create({
   base: {
@@ -19,6 +18,7 @@ const baseStyles = StyleSheet.create({
   },
 });
 
-export default function View({ styles, ...props }) {
+// @ts-expect-error - fix later
+export function View({ styles, ...props }) {
   return <div {...props} className={css(baseStyles.base, styles)} />;
 }

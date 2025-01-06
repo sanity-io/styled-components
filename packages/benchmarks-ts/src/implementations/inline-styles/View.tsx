@@ -1,21 +1,6 @@
-import React from 'react';
+import type { ViewProps } from '../../types';
 
-const compose = (s1, s2) => {
-  if (s1 && s2) {
-    return { ...s1, ...s2 };
-  } else {
-    return s1 || s2;
-  }
-};
-
-class View extends React.Component {
-  render() {
-    const { style, ...other } = this.props;
-    return <div {...other} style={compose(viewStyle, style)} />;
-  }
-}
-
-const viewStyle = {
+export const viewStyle = {
   alignItems: 'stretch',
   borderWidth: 0,
   borderStyle: 'solid',
@@ -30,6 +15,8 @@ const viewStyle = {
   // fix flexbox bugs
   minHeight: 0,
   minWidth: 0,
-};
+} as const;
 
-export default View;
+export function View({ children }: ViewProps) {
+  return <div style={viewStyle}>{children}</div>;
+}

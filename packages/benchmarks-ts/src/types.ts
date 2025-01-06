@@ -100,6 +100,7 @@ export interface TestReport {
   runTime?: number;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export interface Test<Props extends Record<string, any> = Record<string, any>> {
   Component: React.ComponentType<Props>;
   getComponentProps: (props: { cycle: number }) => Props;
@@ -110,6 +111,8 @@ export interface Test<Props extends Record<string, any> = Record<string, any>> {
   name: string;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type TestBlock<Props extends Record<string, any>> = Record<string, Test<Props>>;
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type Tests<Props extends Record<string, any>> = Record<string, TestBlock<Props>>;

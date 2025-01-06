@@ -1,14 +1,20 @@
-import React from 'react';
 import { StyleSheet, View } from 'react-native';
+import type { BoxProps } from '../../types';
 
-const Box = ({ color, fixed = false, layout = 'column', outer = false, ...other }) => (
+export const Box = ({
+  $color,
+  $fixed = false,
+  $layout = 'column',
+  $outer = false,
+  ...other
+}: BoxProps) => (
   <View
     {...other}
     style={[
-      styles[`color${color}`],
-      fixed && styles.fixed,
-      layout === 'row' && styles.row,
-      outer && styles.outer,
+      typeof $color === 'number' && styles[`color${$color}`],
+      $fixed && styles.fixed,
+      $layout === 'row' && styles.row,
+      $outer && styles.outer,
     ]}
   />
 );
@@ -44,5 +50,3 @@ const styles = StyleSheet.create({
     height: 6,
   },
 });
-
-export default Box;

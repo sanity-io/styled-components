@@ -1,8 +1,8 @@
 import classnames from 'classnames';
-import React from 'react';
+import type { BoxProps } from '../../types';
 import { style } from './View';
 
-const getColor = color => {
+const getColor = (color: number | undefined) => {
   switch (color) {
     case 0:
       return '#14171A';
@@ -21,8 +21,16 @@ const getColor = color => {
   }
 };
 
-export default ({ children, className, color, fixed, layout, outer, ...props }) => (
-  <div className={classnames(fixed && 'fixed', className)} {...props}>
+export const Box = ({
+  children,
+  className,
+  $color,
+  $fixed,
+  $layout,
+  $outer,
+  ...props
+}: BoxProps & { children?: React.ReactNode; className?: string }) => (
+  <div className={classnames($fixed && 'fixed', className)} {...props}>
     {children}
 
     <style jsx>{style}</style>
@@ -43,9 +51,9 @@ export default ({ children, className, color, fixed, layout, outer, ...props }) 
     <style jsx>
       {`
         div {
-          flex-direction: ${layout === 'column' ? 'column' : 'row'};
-          padding: ${outer ? '4px' : '0'};
-          background-color: ${getColor(color)};
+          flex-direction: ${$layout === 'column' ? 'column' : 'row'};
+          padding: ${$outer ? '4px' : '0'};
+          background-color: ${getColor($color)};
         }
       `}
     </style>

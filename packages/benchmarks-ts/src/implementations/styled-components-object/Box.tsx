@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import type { BoxColor, BoxProps } from '../../types';
 import { View } from './View';
 
-const getColor = (color?: BoxColor) => {
+const getColor = (color?: BoxColor | undefined) => {
   switch (color) {
     case 0:
       return '#14171A';
@@ -23,9 +23,9 @@ const getColor = (color?: BoxColor) => {
 
 export const Box = styled(View)<BoxProps>(p => ({
   alignSelf: 'flex-start',
-  backgroundColor: getColor(p.color),
-  flexDirection: p.layout === 'column' ? 'column' : 'row',
-  height: p.fixed ? '6px' : 'auto',
-  padding: p.outer ? '4px' : 0,
-  width: p.fixed ? '6px' : 'auto',
+  backgroundColor: getColor(p.$color),
+  flexDirection: p.$layout === 'column' ? 'column' : 'row',
+  height: p.$fixed ? '6px' : 'auto',
+  padding: p.$outer ? '4px' : 0,
+  width: p.$fixed ? '6px' : 'auto',
 }));

@@ -1,7 +1,8 @@
 import { styled } from 'goober';
-import View from './View';
+import type { DotProps } from '../../types';
+import { View } from './View';
 
-const Dot = styled(View)`
+export const Dot = styled(View)<DotProps>`
   position: absolute;
   cursor: pointer;
   width: 0;
@@ -11,11 +12,9 @@ const Dot = styled(View)`
   border-style: solid;
   border-top-width: 0;
   transform: translate(50%, 50%);
-  margin-left: ${p => `${p.x}px`};
-  margin-top: ${p => `${p.y}px`};
-  border-right-width: ${p => `${p.size / 2}px`};
-  border-bottom-width: ${p => `${p.size / 2}px`};
-  border-left-width: ${p => `${p.size / 2}px`};
+  margin-left: ${p => `${p.$x}px`};
+  margin-top: ${p => `${p.$y}px`};
+  border-right-width: ${p => `${p.$size / 2}px`};
+  border-bottom-width: ${p => `${p.$size / 2}px`};
+  border-left-width: ${p => `${p.$size / 2}px`};
 `;
-
-export default Dot;

@@ -1,12 +1,13 @@
 import classnames from 'classnames';
-import React from 'react';
 import styles from './view.module.css';
 
-class View extends React.Component {
-  render() {
-    const props = this.props;
-    return <div {...props} className={classnames(styles.initial, props.className)} />;
-  }
+export function View({
+  className,
+  ...props
+}: {
+  className?: string;
+  style?: React.CSSProperties;
+  children?: React.ReactNode;
+}) {
+  return <div {...props} className={classnames(styles.initial, className)} />;
 }
-
-export default View;

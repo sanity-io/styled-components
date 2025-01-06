@@ -32,16 +32,7 @@ export default function SierpinskiTriangle({
       // introduce randomness to ensure that repeated runs don't produce the same colors
       const color = fn((renderCount * Math.random()) / 20);
       return (
-        <Dot
-          $color={color}
-          color={color}
-          $size={targetSize}
-          size={targetSize}
-          $x={x - targetSize / 2}
-          x={x - targetSize / 2}
-          $y={y - targetSize / 2}
-          y={y - targetSize / 2}
-        />
+        <Dot $color={color} $size={targetSize} $x={x - targetSize / 2} $y={y - targetSize / 2} />
       );
     }
 

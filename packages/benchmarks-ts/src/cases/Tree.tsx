@@ -16,19 +16,10 @@ export default function Tree({ breadth, components, depth, id, wrap }: TreeProps
         wrap={wrap}
       />
     ));
-  const color = (id % 3) as 0 | 1 | 2;
-  const layout = depth % 2 === 0 ? 'column' : 'row';
 
   let result = (
-    <Box $color={color} color={color} $layout={layout} layout={layout} $outer outer>
-      {depth === 0 && (
-        <Box
-          $color={((id % 3) + 3) as 3 | 4 | 5}
-          color={((id % 3) + 3) as 3 | 4 | 5}
-          $fixed
-          fixed
-        />
-      )}
+    <Box $color={(id % 3) as 0 | 1 | 2} $layout={depth % 2 === 0 ? 'column' : 'row'} $outer>
+      {depth === 0 && <Box $color={((id % 3) + 3) as 3 | 4 | 5} $fixed />}
       {children}
     </Box>
   );

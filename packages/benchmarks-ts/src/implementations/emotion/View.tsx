@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 
-export default styled.div({
+export const View = styled.div({
   alignItems: 'stretch',
   borderWidth: 0,
   borderStyle: 'solid',

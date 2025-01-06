@@ -69,8 +69,15 @@ export function App(props: {
   };
 
   const _createHandleComplete =
-    ({ benchmarkName, libraryName, sampleCount }) =>
-    results => {
+    ({
+      benchmarkName,
+      libraryName,
+    }: {
+      benchmarkName: string;
+      libraryName: string;
+      sampleCount: number;
+    }) =>
+    (results: any) => {
       flushSync(() =>
         setState(state => ({
           ...state,

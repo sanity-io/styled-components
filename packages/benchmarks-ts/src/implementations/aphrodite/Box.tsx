@@ -1,6 +1,6 @@
 import { StyleSheet } from 'aphrodite/no-important';
-import React from 'react';
-import View from './View';
+import type { BoxProps } from '../../types';
+import { View } from './View';
 
 const styles = StyleSheet.create({
   outer: {
@@ -34,15 +34,21 @@ const styles = StyleSheet.create({
   },
 });
 
-export default function Box({ color, fixed = false, layout = 'column', outer = false, ...props }) {
+export function Box({
+  $color,
+  $fixed = false,
+  $layout = 'column',
+  $outer = false,
+  ...props
+}: BoxProps) {
   return (
     <View
       {...props}
       styles={[
-        styles[`color${color}`],
-        fixed && styles.fixed,
-        layout === 'row' && styles.row,
-        outer && styles.outer,
+        typeof $color === 'number' && styles[`color${$color}`],
+        $fixed && styles.fixed,
+        $layout === 'row' && styles.row,
+        $outer && styles.outer,
       ]}
     />
   );

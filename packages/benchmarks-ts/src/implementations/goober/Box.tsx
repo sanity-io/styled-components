@@ -1,7 +1,8 @@
 import { css, styled } from 'goober';
-import View from './View';
+import type { BoxColor, BoxProps } from '../../types';
+import { View } from './View';
 
-const getColor = color => {
+const getColor = (color: BoxColor | undefined) => {
   switch (color) {
     case 0:
       return '#14171A';
@@ -20,13 +21,13 @@ const getColor = color => {
   }
 };
 
-export default styled(View)`
+export const Box = styled(View)<BoxProps>`
   align-self: flex-start;
-  background-color: ${p => getColor(p.color)};
-  flex-direction: ${p => (p.layout === 'column' ? 'column' : 'row')};
-  padding: ${p => (p.outer ? '4px' : '0')};
+  background-color: ${p => getColor(p.$color)};
+  flex-direction: ${p => (p.$layout === 'column' ? 'column' : 'row')};
+  padding: ${p => (p.$outer ? '4px' : '0')};
   ${p =>
-    p.fixed &&
+    p.$fixed &&
     css`
       height: 6px;
       width: 6px;

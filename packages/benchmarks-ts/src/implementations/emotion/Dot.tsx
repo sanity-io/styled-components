@@ -1,7 +1,8 @@
 import styled from '@emotion/styled';
-import React from 'react';
+import type { DotProps } from '../../types';
 
-const StyledDot = styled.div(p => ({
+// @ts-expect-error - fix later
+const StyledDot = styled.div((p: DotProps) => ({
   position: 'absolute',
   cursor: 'pointer',
   width: 0,
@@ -10,13 +11,13 @@ const StyledDot = styled.div(p => ({
   borderStyle: 'solid',
   borderTopWidth: 0,
   transform: 'translate(50%, 50%)',
-  borderRightWidth: `${p.size / 2}px`,
-  borderBottomWidth: `${p.size / 2}px`,
-  borderLeftWidth: `${p.size / 2}px`,
-  marginLeft: `${p.x}px`,
-  marginTop: `${p.y}px`,
+  borderRightWidth: `${p.$size / 2}px`,
+  borderBottomWidth: `${p.$size / 2}px`,
+  borderLeftWidth: `${p.$size / 2}px`,
+  marginLeft: `${p.$x}px`,
+  marginTop: `${p.$y}px`,
 }));
 
-export default function Dot({ color, ...props }) {
-  return <StyledDot {...props} style={{ borderBottomColor: color }} />;
+export function Dot({ $color, ...props }: DotProps) {
+  return <StyledDot {...props} style={{ borderBottomColor: $color }} />;
 }

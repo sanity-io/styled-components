@@ -3,7 +3,9 @@ import { StyleSheet, View } from 'react-native';
 import type { TestReport } from '../types';
 import { Text } from './Text';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const fmt = (time: any) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const i: any = Number(
     Math.round(
       // @ts-expect-error - fix later

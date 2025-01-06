@@ -1,7 +1,8 @@
 import { styled } from 'restyle';
+import type { BoxProps } from '../../types';
 import { View } from './View';
 
-const getColor = color => {
+const getColor = (color: number | undefined) => {
   switch (color) {
     case 0:
       return '#14171A';
@@ -20,11 +21,11 @@ const getColor = color => {
   }
 };
 
-export const Box = styled(View, p => ({
+export const Box = styled(View, (p: BoxProps) => ({
   alignSelf: 'flex-start',
-  backgroundColor: getColor(p.color),
-  flexDirection: p.layout === 'column' ? 'column' : 'row',
-  height: p.fixed ? '6px' : 'auto',
-  padding: p.outer ? '4px' : 0,
-  width: p.fixed ? '6px' : 'auto',
+  backgroundColor: getColor(p.$color),
+  flexDirection: p.$layout === 'column' ? 'column' : 'row',
+  height: p.$fixed ? '6px' : 'auto',
+  padding: p.$outer ? '4px' : 0,
+  width: p.$fixed ? '6px' : 'auto',
 }));

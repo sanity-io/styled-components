@@ -1,14 +1,21 @@
-import React from 'react';
-import View from './View';
+import type { BoxProps } from '../../types';
+import { viewStyle } from './View';
 
-const Box = ({ color, fixed = false, layout = 'column', outer = false, ...other }) => (
-  <View
+export const Box = ({
+  $color,
+  $fixed = false,
+  $layout = 'column',
+  $outer = false,
+  ...other
+}: BoxProps) => (
+  <div
     {...other}
     style={{
-      ...styles[`color${color}`],
-      ...(fixed && styles.fixed),
-      ...(layout === 'row' && styles.row),
-      ...(outer && styles.outer),
+      ...viewStyle,
+      ...(typeof $color === 'number' && styles[`color${$color}`]),
+      ...($fixed && styles.fixed),
+      ...($layout === 'row' && styles.row),
+      ...($outer && styles.outer),
     }}
   />
 );
@@ -43,6 +50,4 @@ const styles = {
     width: 6,
     height: 6,
   },
-};
-
-export default Box;
+} as const;
