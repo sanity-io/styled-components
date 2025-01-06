@@ -1,3 +1,5 @@
+/// <reference types="react-native-web" />
+
 import type React from 'react';
 
 export type BoxColor = 0 | 1 | 2 | 3 | 4 | 5;
@@ -84,6 +86,18 @@ export interface TreeProps {
   depth: number;
   id: number;
   wrap: number;
+}
+
+export interface TestReport {
+  benchmarkName: string;
+  libraryName: string;
+  sampleCount?: number;
+  mean?: number;
+  meanLayout?: number;
+  meanScripting?: number;
+  stdDev?: number;
+  libraryVersion?: string;
+  runTime?: number;
 }
 
 export interface Test<Props extends Record<string, any> = Record<string, any>> {

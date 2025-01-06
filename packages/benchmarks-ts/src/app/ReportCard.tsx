@@ -1,5 +1,6 @@
 import { memo } from 'react';
 import { StyleSheet, View } from 'react-native';
+import type { TestReport } from '../types';
 import { Text } from './Text';
 
 const fmt = (time: any) => {
@@ -12,16 +13,7 @@ const fmt = (time: any) => {
   return 10 / i > 1 ? `0${i}` : i;
 };
 
-export const ReportCard = memo(function ReportCard(props: {
-  benchmarkName: string;
-  libraryName: string;
-  sampleCount?: number;
-  mean?: number;
-  meanLayout?: number;
-  meanScripting?: number;
-  stdDev?: number;
-  libraryVersion?: string;
-}) {
+export const ReportCard = memo(function ReportCard(props: TestReport) {
   const {
     benchmarkName,
     libraryName,

@@ -4,11 +4,11 @@ import { View } from './View';
 
 export const Box = withStyle(
   View,
-  ({ color, fixed = false, layout = 'column', outer = false }: BoxProps) => ({
-    ...(typeof color === 'number' && styles[`color${color}`]),
-    ...(fixed && styles.fixed),
-    ...(layout === 'row' && styles.row),
-    ...(outer && styles.outer),
+  ({ $color, $fixed = false, $layout = 'column', $outer = false }: BoxProps) => ({
+    ...(typeof $color === 'number' && styles[`color${$color}`]),
+    ...($fixed && styles.fixed),
+    ...($layout === 'row' && styles.row),
+    ...($outer && styles.outer),
   })
 );
 

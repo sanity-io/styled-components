@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import type { Tests } from '../types';
+import type { TestReport, Tests } from '../types';
 import Benchmark from './Benchmark';
 import { Button } from './Button';
 import { IconClear, IconEye } from './Icons';
@@ -19,9 +19,17 @@ import { colors } from './theme';
 
 const overlay = <View style={[StyleSheet.absoluteFill, { zIndex: 2 }]} />;
 
-export function App(props: { tests: Tests<any> }) {
+export function App(props: {
+  tests: // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  Tests<any>;
+}) {
   const { tests } = props;
-  const [state, setState] = useState(() => ({
+  const [state, setState] = useState<{
+    currentBenchmarkName: string;
+    currentLibraryName: string;
+    status: 'idle' | 'running' | 'complete';
+    results: TestReport[];
+  }>(() => ({
     currentBenchmarkName: Object.keys(props.tests)[0],
     currentLibraryName: 'styled-components',
     status: 'idle',
@@ -33,11 +41,11 @@ export function App(props: { tests: Tests<any> }) {
   const _scrollRef = useRef<ScrollView>(null);
   const _shouldHideBenchmark = useRef(false);
 
-  const _handleChangeBenchmark = value => {
+  const _handleChangeBenchmark = (value: string) => {
     setState(prev => ({ ...prev, currentBenchmarkName: value }));
   };
 
-  const _handleChangeLibrary = value => {
+  const _handleChangeLibrary = (value: string) => {
     setState(prev => ({ ...prev, currentLibraryName: value }));
   };
 
