@@ -7,11 +7,22 @@ import { App } from './app/App';
 import SierpinskiTriangle from './cases/SierpinskiTriangle';
 import Tree from './cases/Tree';
 import { implementations } from './implementations';
+import type {
+  ImplementationComponents,
+  SierpinskiTriangleProps,
+  Test,
+  TestBlock,
+  TreeProps,
+} from './types';
 
 const packageNames = Object.keys(implementations);
 
-const createTestBlock = fn => {
-  return packageNames.reduce((testSetups, packageName) => {
+function createTestBlock<const Props extends Record<string, any>>(
+  fn: (components: ImplementationComponents) => Omit<Test<Props>, 'version' | 'name'>
+): TestBlock<Props> {
+  const testSetups: TestBlock<Props> = {};
+
+  for (const packageName of packageNames) {
     const { name, components, version } = implementations[packageName];
     const { Component, getComponentProps, sampleCount, Provider, benchmarkType } = fn(components);
 
@@ -24,17 +35,18 @@ const createTestBlock = fn => {
       version,
       name,
     };
-    return testSetups;
-  }, {});
-};
+  }
+
+  return testSetups;
+}
 
 const tests = {
-  'Mount deep tree': createTestBlock(components => ({
+  'Mount deep tree': createTestBlock<TreeProps>(components => ({
     benchmarkType: 'mount',
     Component: Tree,
     getComponentProps: ({ cycle }) => ({
-      breadth: 2,
       components,
+      breadth: 2,
       depth: 7,
       id: cycle,
       wrap: 1,
@@ -42,12 +54,12 @@ const tests = {
     Provider: components.Provider,
     sampleCount: 500,
   })),
-  'Mount wide tree': createTestBlock(components => ({
+  'Mount wide tree': createTestBlock<TreeProps>(components => ({
     benchmarkType: 'mount',
     Component: Tree,
     getComponentProps: ({ cycle }) => ({
-      breadth: 6,
       components,
+      breadth: 6,
       depth: 3,
       id: cycle,
       wrap: 2,
@@ -55,7 +67,7 @@ const tests = {
     Provider: components.Provider,
     sampleCount: 500,
   })),
-  'Update dynamic styles': createTestBlock(components => ({
+  'Update dynamic styles': createTestBlock<SierpinskiTriangleProps>(components => ({
     benchmarkType: 'update',
     Component: SierpinskiTriangle,
     getComponentProps: ({ cycle }) => {

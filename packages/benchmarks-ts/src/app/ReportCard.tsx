@@ -15,12 +15,12 @@ const fmt = (time: any) => {
 export const ReportCard = memo(function ReportCard(props: {
   benchmarkName: string;
   libraryName: string;
-  sampleCount: number;
-  mean: number;
-  meanLayout: number;
-  meanScripting: number;
-  stdDev: number;
-  libraryVersion: string;
+  sampleCount?: number;
+  mean?: number;
+  meanLayout?: number;
+  meanScripting?: number;
+  stdDev?: number;
+  libraryVersion?: string;
 }) {
   const {
     benchmarkName,

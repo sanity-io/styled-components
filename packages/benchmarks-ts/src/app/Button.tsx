@@ -1,12 +1,12 @@
 import { StyleSheet, Text, TouchableHighlight } from 'react-native';
 
 export function Button(props: {
-  accessibilityLabel: string;
-  color: string;
-  disabled: boolean;
+  accessibilityLabel?: string;
+  color?: string;
+  disabled?: boolean;
   onPress: () => void;
-  style: any;
-  textStyle: any;
+  style?: any;
+  textStyle?: any;
   testID: string;
   title: string;
 }) {

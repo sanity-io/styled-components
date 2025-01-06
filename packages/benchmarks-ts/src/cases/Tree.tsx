@@ -1,15 +1,7 @@
 import { BenchmarkType } from '../app/Benchmark';
-import type { ImplementationComponents } from '../types';
+import type { TreeProps } from '../types';
 
-interface ITree {
-  components: ImplementationComponents;
-  breadth: number;
-  depth: number;
-  id: number;
-  wrap: number;
-}
-
-export default function Tree({ breadth, components, depth, id, wrap }: ITree) {
+export default function Tree({ breadth, components, depth, id, wrap }: TreeProps) {
   const { Box } = components;
 
   const children =

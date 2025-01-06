@@ -1,3 +1,5 @@
+import type React from 'react';
+
 export type BoxColor = 0 | 1 | 2 | 3 | 4 | 5;
 
 export interface BoxProps {
@@ -69,7 +71,7 @@ export interface Implementation {
 
 export interface SierpinskiTriangleProps {
   components: ImplementationComponents;
-  depth: number;
+  depth?: number;
   renderCount: number;
   s: number;
   x: number;
@@ -83,3 +85,17 @@ export interface TreeProps {
   id: number;
   wrap: number;
 }
+
+export interface Test<Props extends Record<string, any> = Record<string, any>> {
+  Component: React.ComponentType<Props>;
+  getComponentProps: (props: { cycle: number }) => Props;
+  sampleCount: number;
+  Provider: React.ComponentType<ProviderProps>;
+  benchmarkType: 'mount' | 'update';
+  version: string;
+  name: string;
+}
+
+export type TestBlock<Props extends Record<string, any>> = Record<string, Test<Props>>;
+
+export type Tests<Props extends Record<string, any>> = Record<string, TestBlock<Props>>;

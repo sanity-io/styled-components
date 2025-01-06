@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
 });
 
 const createIcon = (children: React.ReactNode) => {
-  const Icon = (props: { style: unknown }) =>
+  const Icon = (props: { style?: unknown }) =>
     createElement(
       'svg',
       {
