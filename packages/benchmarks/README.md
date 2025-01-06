@@ -89,18 +89,21 @@ Typical render timings: mean ± standard deviations.
 | `styled-jsx`               |       `03.11 ±00.33` |       `05.01 ±00.59` |             `01.67 ±00.58` |
 | `styletron-react`          |       `03.20 ±00.24` |       `04.40 ±00.16` |             `01.89 ±00.62` |
 
-After upgrading to React 19 and using ReactDOM.createRoot:
+After upgrading to React 19 and using ReactDOM.createRoot, refactoring away from class components, and enabling React Compiler:
 
-| Implementation             | Mount deep tree (ms) | Mount wide tree (ms) | Update dynamic styles (ms) |
-| :------------------------- | -------------------: | -------------------: | -------------------------: |
-| `aphrodite`                |       `02.20 ±00.66` |       `02.75 ±00.53` |             `01.13 ±00.34` |
-| `emotion`                  |                      |                      |                            |
-| `goober`                   |                      |                      |                            |
-| `inline-styles`            |                      |                      |                            |
-| `react-native-web`         |                      |                      |                            |
-| `styled-components-object` |       `02.71 ±00.52` |       `03.69 ±00.30` |                          - |
-| `styled-components-v5`     |       `02.50 ±00.58` |       `03.12 ±00.15` |             `01.68 ±00.51` |
-| `styled-components-v6`     |       `02.39 ±00.70` |       `02.89 ±00.12` |             `01.42 ±00.49` |
-| `styled-components`        |       `02.38 ±00.62` |       `02.89 ±00.12` |             `01.50 ±00.44` |
-| `styled-jsx`               |                      |                      |                            |
-| `styletron-react`          |                      |                      |                            |
+| Implementation                           | Mount deep tree (ms) | Mount wide tree (ms) | Update dynamic styles (ms) |
+| :--------------------------------------- | -------------------: | -------------------: | -------------------------: |
+| `aphrodite`                              |       `02.54 ±00.74` |       `02.75 ±00.53` |             `01.13 ±00.34` |
+| `css-modules`                            |       `02.50 ±00.79` |                      |                            |
+| `emotion`                                |       `03.06 ±00.46` |                      |                            |
+| `goober`                                 |       `02.94 ±00.70` |                      |                            |
+| `inline-styles`                          |       `03.36 ±00.18` |                      |                            |
+| `react-native-web`                       |       `03.17 ±00.40` |                      |                            |
+| `restyle`                                |       `13.49 ±01.37` |                      |                            |
+| `styled-components-object`               |       `02.93 ±00.52` |       `03.69 ±00.30` |                          - |
+| `styled-components-use-insertion-effect` |       `02.73 ±00.77` |       `03.69 ±00.30` |                          - |
+| `styled-components-v5`                   |       `02.65 ±00.75` |       `03.12 ±00.15` |             `01.68 ±00.51` |
+| `styled-components-v6`                   |       `02.70 ±00.81` |       `02.89 ±00.12` |             `01.42 ±00.49` |
+| `styled-components`                      |       `02.68 ±00.74` |       `02.89 ±00.12` |             `01.50 ±00.44` |
+| `styled-jsx`                             |       `02.83 ±00.47` |                      |                            |
+| `styletron-react`                        |       `03.02 ±00.63` |                      |                            |
