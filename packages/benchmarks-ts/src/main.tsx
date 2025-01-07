@@ -1,7 +1,6 @@
 import 'virtual:stylex.css';
 import './index.css';
 
-import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { App } from './app/App';
 import SierpinskiTriangle from './cases/SierpinskiTriangle';
@@ -52,7 +51,8 @@ const tests = {
       wrap: 1,
     }),
     Provider: components.Provider,
-    sampleCount: 500,
+    // sampleCount: 500,
+    sampleCount: 2,
   })),
   'Mount wide tree': createTestBlock<TreeProps>(components => ({
     benchmarkType: 'mount',
@@ -65,7 +65,8 @@ const tests = {
       wrap: 2,
     }),
     Provider: components.Provider,
-    sampleCount: 500,
+    // sampleCount: 500,
+    sampleCount: 2,
   })),
   'Update dynamic styles': createTestBlock<SierpinskiTriangleProps>(components => ({
     benchmarkType: 'update',
@@ -74,12 +75,13 @@ const tests = {
       return { components, s: 200, renderCount: cycle, x: 0, y: 0 };
     },
     Provider: components.Provider,
-    sampleCount: 1000,
+    // sampleCount: 1000,
+    sampleCount: 2,
   })),
 };
 
 createRoot(document.querySelector('#root')!).render(
-  <StrictMode>
-    <App tests={tests} />
-  </StrictMode>
+  // <StrictMode>
+  <App tests={tests} />
+  // </StrictMode>
 );

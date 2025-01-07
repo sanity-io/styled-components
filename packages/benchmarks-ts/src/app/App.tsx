@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { Profiler, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 import {
   // @ts-expect-error - fix later
@@ -9,11 +9,16 @@ import {
   View,
 } from 'react-native';
 import type { TestReport, Tests } from '../types';
-import Benchmark from './Benchmark';
+import Benchmark2, {
+  BenchmarkProfiler as Benchmark,
+  type BenchmarkRef,
+  type BenchmarkResults,
+} from './Benchmark';
 import { Button } from './Button';
 import { IconClear, IconEye } from './Icons';
 import { Layout } from './Layout';
 import { ReportCard } from './ReportCard';
+import { ReportCard2 } from './ReportCard2';
 import { Text } from './Text';
 import { colors } from './theme';
 
@@ -24,36 +29,36 @@ export function App(props: {
   Tests<any>;
 }) {
   const { tests } = props;
-  const [state, setState] = useState<{
-    currentBenchmarkName: string;
-    currentLibraryName: string;
-    status: 'idle' | 'running' | 'complete';
-    results: TestReport[];
-  }>(() => ({
-    currentBenchmarkName: Object.keys(props.tests)[0],
-    currentLibraryName: 'styled-components',
-    status: 'idle',
-    results: [],
-  }));
+  const [currentBenchmarkName, setCurrentBenchmarkName] = useState(
+    () => Object.keys(props.tests)[0]
+  );
+  const [currentLibraryName, setCurrentLibraryName] = useState('styled-components');
+  const [status, setStatus] = useState<'idle' | 'running' | 'complete'>('idle');
+  const [results, setResults] = useState<
+    (BenchmarkResults & { benchmarkName: string; libraryName: string; libraryVersion?: string })[]
+  >([]);
+  const [results2, setResults2] = useState<TestReport[]>([]);
 
-  const _benchmarkRef = useRef<Benchmark>(null);
+  const _benchmarkRef2 = useRef<Benchmark2>(null);
+  const _benchmarkRef = useRef<BenchmarkRef>(null);
   const _benchWrapperRef = useRef<View>(null);
   const _scrollRef = useRef<ScrollView>(null);
   const _shouldHideBenchmark = useRef(false);
 
   const _handleChangeBenchmark = (value: string) => {
-    setState(prev => ({ ...prev, currentBenchmarkName: value }));
+    setCurrentBenchmarkName(value);
   };
 
   const _handleChangeLibrary = (value: string) => {
-    setState(prev => ({ ...prev, currentLibraryName: value }));
+    setCurrentLibraryName(value);
   };
 
   const _handleStart = () => {
-    flushSync(() => setState(prev => ({ ...prev, status: 'running' })));
+    flushSync(() => setStatus('running'));
     if (_shouldHideBenchmark.current && _benchWrapperRef.current) {
       _benchWrapperRef.current.setNativeProps({ style: { opacity: 0 } });
     }
+    _benchmarkRef2.current?.start();
     _benchmarkRef.current!.start();
     _scrollToEnd();
   };
@@ -68,7 +73,7 @@ export function App(props: {
     }
   };
 
-  const _createHandleComplete =
+  const _createHandleComplete2 =
     ({
       benchmarkName,
       libraryName,
@@ -77,29 +82,22 @@ export function App(props: {
       libraryName: string;
       sampleCount: number;
     }) =>
-    (results: any) => {
-      flushSync(() =>
-        setState(state => ({
-          ...state,
-          results: state.results.concat([
-            {
-              ...results,
-              benchmarkName,
-              libraryName,
-              libraryVersion: tests[benchmarkName][libraryName].version,
-            },
-          ]),
-          status: 'complete',
-        }))
+    (results: TestReport) => {
+      setResults2(state =>
+        state.concat([
+          {
+            ...results,
+            benchmarkName,
+            libraryName,
+            libraryVersion: tests[benchmarkName][libraryName].version,
+          },
+        ])
       );
-      _scrollToEnd();
-
-      // console.log(results);
-      // console.log(results.samples.map(sample => sample.elapsed.toFixed(1)).join('\n'));
     };
 
   const _handleClear = () => {
-    setState(prev => ({ ...prev, results: [] }));
+    setResults([]);
+    setResults2([]);
   };
 
   // scroll the most recent result into view
@@ -109,7 +107,6 @@ export function App(props: {
     });
   };
 
-  const { currentBenchmarkName, status, currentLibraryName, results } = state;
   const currentImplementation = tests[currentBenchmarkName][currentLibraryName];
   const { Component, Provider, getComponentProps, sampleCount } = currentImplementation;
 
@@ -177,7 +174,7 @@ export function App(props: {
               </View>
             </View>
             <ScrollView ref={_scrollRef} style={styles.grow}>
-              {results.map((r, i) => (
+              {results2.map((r, i) => (
                 <ReportCard
                   benchmarkName={r.benchmarkName}
                   key={i}
@@ -187,6 +184,20 @@ export function App(props: {
                   meanLayout={r.meanLayout}
                   meanScripting={r.meanScripting}
                   runTime={r.runTime}
+                  sampleCount={r.sampleCount}
+                  stdDev={r.stdDev}
+                />
+              ))}
+              {status === 'running' ? (
+                <ReportCard benchmarkName={currentBenchmarkName} libraryName={currentLibraryName} />
+              ) : null}
+              {results.map((r, i) => (
+                <ReportCard2
+                  benchmarkName={r.benchmarkName}
+                  key={i}
+                  libraryName={r.libraryName}
+                  libraryVersion={r.libraryVersion}
+                  mean={r.mean}
                   sampleCount={r.sampleCount}
                   stdDev={r.stdDev}
                 />
@@ -211,22 +222,61 @@ export function App(props: {
             {status === 'running' ? (
               <>
                 <View ref={_benchWrapperRef}>
-                  <Benchmark
-                    // @ts-expect-error - fix later
-                    component={Component}
-                    forceLayout
-                    getComponentProps={getComponentProps}
-                    onComplete={_createHandleComplete({
-                      sampleCount,
-                      benchmarkName: currentBenchmarkName,
-                      libraryName: currentLibraryName,
-                    })}
-                    ref={_benchmarkRef}
-                    sampleCount={sampleCount}
-                    timeout={20000}
-                    // @ts-expect-error - fix later
-                    type={Component.benchmarkType}
-                  />
+                  <Profiler
+                    id="wrapper"
+                    onRender={(id, phase, actualDuration, baseDuration, startTime, commitTime) => {
+                      console.log('Profiler', {
+                        id,
+                        phase,
+                        actualDuration,
+                        baseDuration,
+                        startTime,
+                        commitTime,
+                      });
+                    }}
+                  >
+                    <Benchmark2
+                      // @ts-expect-error - fix later
+                      component={Component}
+                      forceLayout
+                      getComponentProps={getComponentProps}
+                      onComplete={_createHandleComplete2({
+                        sampleCount,
+                        benchmarkName: currentBenchmarkName,
+                        libraryName: currentLibraryName,
+                      })}
+                      ref={_benchmarkRef2}
+                      sampleCount={sampleCount}
+                      timeout={20000}
+                      // @ts-expect-error - fix later
+                      type={Component.benchmarkType}
+                    />
+                    <Benchmark
+                      // @ts-expect-error - fix later
+                      component={Component}
+                      forceLayout
+                      getComponentProps={getComponentProps}
+                      onComplete={results => {
+                        setResults(state =>
+                          state.concat([
+                            {
+                              ...results,
+                              benchmarkName: currentBenchmarkName,
+                              libraryName: currentLibraryName,
+                              libraryVersion:
+                                tests[currentBenchmarkName][currentLibraryName].version,
+                            },
+                          ])
+                        );
+                        setStatus('complete');
+                      }}
+                      ref={_benchmarkRef}
+                      sampleCount={sampleCount}
+                      timeout={20000}
+                      // @ts-expect-error - fix later
+                      type={Component.benchmarkType}
+                    />
+                  </Profiler>
                 </View>
               </>
             ) : (
