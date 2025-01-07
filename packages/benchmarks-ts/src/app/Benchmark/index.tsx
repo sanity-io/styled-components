@@ -4,8 +4,14 @@
  * https://github.com/paularmstrong/react-component-benchmark
  */
 
-import React, { Profiler, useEffect, useImperativeHandle, useReducer, useRef } from 'react';
-import { flushSync } from 'react-dom';
+import React, {
+  Profiler,
+  startTransition,
+  useEffect,
+  useImperativeHandle,
+  useReducer,
+  useRef,
+} from 'react';
 import { getMean, getMedian, getStdDev } from './math';
 import * as Timing from './timing';
 
@@ -268,18 +274,9 @@ type Sample = {
 };
 
 export interface BenchmarkResults {
-  startTime: number;
-  endTime: number;
-  runTime: number;
   sampleCount: number;
-  samples: Sample[];
-  max: number;
-  min: number;
-  median: number;
   mean: number;
   stdDev: number;
-  meanLayout: number;
-  meanScripting: number;
 }
 
 export interface BenchmarkProps {
@@ -288,7 +285,6 @@ export interface BenchmarkProps {
   type: (typeof BenchmarkType)[keyof typeof BenchmarkType];
   getComponentProps: (props: { cycle: number }) => Record<string, any>;
   ref: React.Ref<BenchmarkRef>;
-  forceLayout: boolean;
   component: any;
   onComplete: (results: BenchmarkResults) => void;
 }
@@ -296,13 +292,9 @@ export interface BenchmarkProps {
 interface BenchmarkState {
   cycle: number;
   running: boolean;
-  componentProps: Record<string, any>;
 }
 
-type BenchmarkAction =
-  | { type: 'start' }
-  | { type: 'cycle'; componentProps: BenchmarkState['componentProps'] }
-  | { type: 'complete' };
+type BenchmarkAction = { type: 'start' } | { type: 'cycle' } | { type: 'complete' };
 
 export function BenchmarkProfiler(props: BenchmarkProps) {
   const {
@@ -312,16 +304,13 @@ export function BenchmarkProfiler(props: BenchmarkProps) {
     getComponentProps,
     ref,
     component: Component,
-    forceLayout,
     onComplete,
   } = props;
 
-  const _samples = useRef<
+  const samplesRef = useRef<
     {
-      scriptingStart: number;
-      scriptingEnd?: number;
-      layoutStart?: number;
-      layoutEnd?: number;
+      start: number;
+      end: number;
     }[]
   >([]);
   const _startTime = useRef(0);
@@ -330,9 +319,8 @@ export function BenchmarkProfiler(props: BenchmarkProps) {
     ref,
     () => ({
       start: () => {
-        _samples.current = [];
+        samplesRef.current = [];
         dispatch({ type: 'start' });
-        console.log('NEW.start', Timing.now());
       },
     }),
     []
@@ -344,7 +332,7 @@ export function BenchmarkProfiler(props: BenchmarkProps) {
         case 'start':
           return { ...state, running: true, cycle: 0 };
         case 'cycle':
-          return { ...state, cycle: state.cycle + 1, componentProps: action.componentProps };
+          return { ...state, cycle: state.cycle + 1 };
         case 'complete':
           return { ...state, running: false, cycle: 0 };
         default:
@@ -355,146 +343,75 @@ export function BenchmarkProfiler(props: BenchmarkProps) {
     ({ cycle, running }) => ({ cycle, running, componentProps: getComponentProps({ cycle }) })
   );
 
-  console.log('NEW render', { props, state, _samples, _startTime });
-
-  const { componentProps, cycle, running } = state;
+  const { cycle, running } = state;
 
   const runningRef = useRef(false);
   useEffect(() => {
-    /**
-     * Equivalent to componentWillUpdate
-     */
-    console.log('NEW componentWillUpdate', _startTime.current);
     if (running && !runningRef.current) {
       _startTime.current = Timing.now();
-      console.log('NEW set start time', _startTime.current);
     }
     runningRef.current = running;
 
-    // render
-    if (running && shouldRecord(cycle, type)) {
-      console.log('NEW.render shouldRecord', Timing.now());
-      _samples.current[cycle] = { scriptingStart: Timing.now() };
+    if (!running) return;
+
+    const now = Timing.now();
+    if (!isDone(cycle, sampleCount, type) && now - _startTime.current < timeout) {
+      startTransition(() => dispatch({ type: 'cycle' }));
+    } else {
+      startTransition(() => dispatch({ type: 'complete' }));
+
+      const samples = samplesRef.current.reduce(
+        (memo, sample) => {
+          memo.push(sample);
+          return memo;
+        },
+        [] as typeof samplesRef.current
+      );
+      const sortedElapsedTimes = samples
+        .filter(Boolean)
+        .map(({ start, end }) => end - start)
+        .sort(sortNumbers);
+
+      onComplete({
+        sampleCount: samples.length,
+        mean: getMean(sortedElapsedTimes),
+        stdDev: getStdDev(sortedElapsedTimes),
+      });
     }
-
-    /**
-     * The rest of the passive effect should only run if the benchmark has started
-     */
-    // if (!running) {
-    //   console.log('NEW not running');
-    //   return;
-    // }
-
-    /**
-     * Equivalent to componentDidUpdate
-     */
-    console.log('NEW componentDidUpdate');
-
-    if (running && shouldRecord(cycle, type)) {
-      _samples.current[cycle].scriptingEnd = Timing.now();
-
-      // force style recalc that would otherwise happen before the next frame
-      if (forceLayout) {
-        _samples.current[cycle].layoutStart = Timing.now();
-        if (document.body) {
-          // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-          document.body.offsetWidth;
-        }
-        _samples.current[cycle].layoutEnd = Timing.now();
-      }
-    }
-
-    if (running) {
-      const now = Timing.now();
-      if (!isDone(cycle, sampleCount, type) && now - _startTime.current < timeout) {
-        console.log('NEW._handleCycleComplete');
-
-        let componentProps: BenchmarkState['componentProps'];
-        if (getComponentProps) {
-          // Calculate the component props outside of the time recording (render)
-          // so that it doesn't skew results
-          componentProps = getComponentProps({ cycle });
-          // make sure props always change for update tests
-          if (type === BenchmarkType.UPDATE) {
-            componentProps['data-test'] = cycle;
-          }
-        }
-
-        console.log('NEW.requestAnimationFrame');
-        const _raf = window.requestAnimationFrame(() => {
-          console.log('NEW.requestAnimationFrame fired');
-          flushSync(() => {
-            dispatch({ type: 'cycle', componentProps });
-          });
-        });
-        return () => window.cancelAnimationFrame(_raf);
-      } else {
-        const endTime = now;
-        console.log('NEW._handleComplete');
-        console.log('NEW.getSamples');
-        const samples = _samples.current.reduce(
-          (memo, { scriptingStart, scriptingEnd, layoutStart, layoutEnd }) => {
-            memo.push({
-              start: scriptingStart,
-              end: layoutEnd || scriptingEnd || 0,
-              scriptingStart,
-              scriptingEnd: scriptingEnd || 0,
-              layoutStart,
-              layoutEnd,
-            });
-            return memo;
-          },
-          []
-        );
-
-        dispatch({ type: 'complete' });
-
-        const runTime = endTime - _startTime.current;
-        const sortedElapsedTimes = samples.map(({ start, end }) => end - start).sort(sortNumbers);
-        const sortedScriptingElapsedTimes = samples
-          .map(({ scriptingStart, scriptingEnd }) => scriptingEnd - scriptingStart)
-          .sort(sortNumbers);
-        const sortedLayoutElapsedTimes = samples
-          .map(({ layoutStart, layoutEnd }) => (layoutEnd || 0) - (layoutStart || 0))
-          .sort(sortNumbers);
-
-        onComplete({
-          startTime: _startTime.current,
-          endTime,
-          runTime,
-          sampleCount: samples.length,
-          samples: samples,
-          max: sortedElapsedTimes[sortedElapsedTimes.length - 1],
-          min: sortedElapsedTimes[0],
-          median: getMedian(sortedElapsedTimes),
-          mean: getMean(sortedElapsedTimes),
-          stdDev: getStdDev(sortedElapsedTimes),
-          meanLayout: getMean(sortedLayoutElapsedTimes),
-          meanScripting: getMean(sortedScriptingElapsedTimes),
-        });
-      }
-    }
-  }, [cycle, forceLayout, getComponentProps, onComplete, running, sampleCount, timeout, type]);
-
-  if (running && shouldRender(cycle, type)) {
-    console.log('NEW.render shouldRender', Timing.now());
-  }
+  }, [cycle, onComplete, running, sampleCount, timeout, type]);
 
   return (
     <Profiler
       id="benchmark"
-      onRender={(id, phase, actualDuration, baseDuration, startTime, commitTime) => {
+      onRender={(_id, _phase, _actualDuration, _baseDuration, startTime, commitTime) => {
+        if (running && shouldRecord(cycle, type)) {
+          samplesRef.current[cycle] = {
+            start: startTime,
+            // end: startTime + actualDuration,
+            end: commitTime,
+          };
+        }
+        /*
         console.log('NEW onRender', {
-          id,
-          phase,
-          actualDuration,
-          baseDuration,
+          _id,
+          _phase,
+          _actualDuration,
+          _baseDuration,
           startTime,
           commitTime,
         });
+        // */
       }}
     >
-      {running && shouldRender(cycle, type) ? <Component {...componentProps} /> : null}
+      {running && shouldRender(cycle, type) ? (
+        <Component
+          // Since we're measuring the rendre of <Component /> with <Profiler /> we don't have to worry about
+          // calculating the component props during render skewing testing results
+          {...getComponentProps({ cycle })}
+          // make sure props always change for update tests
+          data-test={type === BenchmarkType.UPDATE ? cycle : undefined}
+        />
+      ) : null}
     </Profiler>
   );
 }

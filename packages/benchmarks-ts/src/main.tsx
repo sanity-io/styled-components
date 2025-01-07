@@ -46,37 +46,38 @@ const tests = {
     getComponentProps: ({ cycle }) => ({
       components,
       breadth: 2,
-      depth: 7,
+      depth: 8,
       id: cycle,
       wrap: 1,
     }),
     Provider: components.Provider,
-    // sampleCount: 500,
-    sampleCount: 2,
+    sampleCount: 500,
+    // sampleCount: 2,
   })),
   'Mount wide tree': createTestBlock<TreeProps>(components => ({
     benchmarkType: 'mount',
     Component: Tree,
     getComponentProps: ({ cycle }) => ({
       components,
-      breadth: 6,
+      breadth: 7,
       depth: 3,
       id: cycle,
       wrap: 2,
     }),
     Provider: components.Provider,
-    // sampleCount: 500,
-    sampleCount: 2,
+    sampleCount: 500,
+    // sampleCount: 2,
   })),
   'Update dynamic styles': createTestBlock<SierpinskiTriangleProps>(components => ({
     benchmarkType: 'update',
     Component: SierpinskiTriangle,
     getComponentProps: ({ cycle }) => {
-      return { components, s: 200, renderCount: cycle, x: 0, y: 0 };
+      return { components, s: 256, renderCount: cycle, x: 0, y: 0 };
     },
     Provider: components.Provider,
-    // sampleCount: 1000,
-    sampleCount: 2,
+    // sampleCount: 10_000,
+    sampleCount: 1_000,
+    // sampleCount: 2,
   })),
 };
 

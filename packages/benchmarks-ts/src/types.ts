@@ -91,12 +91,12 @@ export interface TreeProps {
 export interface TestReport {
   benchmarkName: string;
   libraryName: string;
+  libraryVersion?: string;
   sampleCount?: number;
   mean?: number;
   meanLayout?: number;
   meanScripting?: number;
   stdDev?: number;
-  libraryVersion?: string;
   runTime?: number;
 }
 

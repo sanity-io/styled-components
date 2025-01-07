@@ -2,7 +2,7 @@ import { interpolateBuPu, interpolatePurples, interpolateRdPu } from 'd3-scale-c
 import { BenchmarkType } from '../app/Benchmark';
 import type { SierpinskiTriangleProps } from '../types';
 
-const targetSize = 10;
+const targetSize = 6;
 
 export default function SierpinskiTriangle({
   components,
@@ -15,6 +15,7 @@ export default function SierpinskiTriangle({
   const { Dot } = components;
 
   if (Dot) {
+    console.log({ s, targetSize });
     if (s <= targetSize) {
       let fn;
       switch (depth) {
