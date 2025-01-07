@@ -15,7 +15,7 @@ const fmt = (time: any) => {
   return 10 / i > 1 ? `0${i}` : i;
 };
 
-export const ReportCard2 = memo(function ReportCard(
+export const ProfilerReportCard = memo(function ReportCard(
   props: Pick<
     TestReport,
     'benchmarkName' | 'libraryName' | 'sampleCount' | 'mean' | 'stdDev' | 'libraryVersion'

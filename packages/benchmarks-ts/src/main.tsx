@@ -1,29 +1,27 @@
 import 'virtual:stylex.css';
 import './index.css';
 
+import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { App } from './app/App';
-import SierpinskiTriangle from './cases/SierpinskiTriangle';
-import Tree from './cases/Tree';
+import { SierpinskiTriangle } from './cases/SierpinskiTriangle';
+import { Tree } from './cases/Tree';
 import { implementations } from './implementations';
-import type {
-  ImplementationComponents,
-  SierpinskiTriangleProps,
-  Test,
-  TestBlock,
-  TreeProps,
-} from './types';
+import type { ImplementationComponents, SafeAny, Test, TestBlock } from './types';
 
 const packageNames = Object.keys(implementations);
 
-function createTestBlock<const Props extends Record<string, any>>(
-  fn: (components: ImplementationComponents) => Omit<Test<Props>, 'version' | 'name'>
-): TestBlock<Props> {
-  const testSetups: TestBlock<Props> = {};
+function createTestBlock<ComponentType extends React.ComponentType<SafeAny>>(
+  Component: ComponentType,
+  fn: (
+    components: ImplementationComponents
+  ) => Omit<Test<ComponentType>, 'Component' | 'version' | 'name'>
+): TestBlock<ComponentType> {
+  const testSetups: TestBlock<ComponentType> = {};
 
   for (const packageName of packageNames) {
     const { name, components, version } = implementations[packageName];
-    const { Component, getComponentProps, sampleCount, Provider, benchmarkType } = fn(components);
+    const { getComponentProps, sampleCount, Provider, benchmarkType } = fn(components);
 
     testSetups[packageName] = {
       Component,
@@ -40,9 +38,8 @@ function createTestBlock<const Props extends Record<string, any>>(
 }
 
 const tests = {
-  'Mount deep tree': createTestBlock<TreeProps>(components => ({
+  'Mount deep tree': createTestBlock(Tree, components => ({
     benchmarkType: 'mount',
-    Component: Tree,
     getComponentProps: ({ cycle }) => ({
       components,
       breadth: 2,
@@ -52,11 +49,9 @@ const tests = {
     }),
     Provider: components.Provider,
     sampleCount: 500,
-    // sampleCount: 2,
   })),
-  'Mount wide tree': createTestBlock<TreeProps>(components => ({
+  'Mount wide tree': createTestBlock(Tree, components => ({
     benchmarkType: 'mount',
-    Component: Tree,
     getComponentProps: ({ cycle }) => ({
       components,
       breadth: 7,
@@ -66,23 +61,23 @@ const tests = {
     }),
     Provider: components.Provider,
     sampleCount: 500,
-    // sampleCount: 2,
   })),
-  'Update dynamic styles': createTestBlock<SierpinskiTriangleProps>(components => ({
+  'Update dynamic styles': createTestBlock(SierpinskiTriangle, components => ({
     benchmarkType: 'update',
-    Component: SierpinskiTriangle,
-    getComponentProps: ({ cycle }) => {
-      return { components, s: 256, renderCount: cycle, x: 0, y: 0 };
-    },
+    getComponentProps: ({ cycle }) => ({
+      components,
+      s: 256,
+      renderCount: cycle,
+      x: 0,
+      y: 0,
+    }),
     Provider: components.Provider,
-    // sampleCount: 10_000,
-    sampleCount: 1_000,
-    // sampleCount: 2,
+    sampleCount: 1000,
   })),
 };
 
 createRoot(document.querySelector('#root')!).render(
-  // <StrictMode>
-  <App tests={tests} />
-  // </StrictMode>
+  <StrictMode>
+    <App tests={tests} />
+  </StrictMode>
 );

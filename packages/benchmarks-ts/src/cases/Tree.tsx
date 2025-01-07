@@ -1,7 +1,6 @@
-import { BenchmarkType } from '../app/Benchmark';
 import type { TreeProps } from '../types';
 
-export default function Tree({ breadth, components, depth, id, wrap }: TreeProps) {
+export function Tree({ breadth, components, depth, id, wrap }: TreeProps) {
   const { Box } = components;
 
   const children =
@@ -28,6 +27,4 @@ export default function Tree({ breadth, components, depth, id, wrap }: TreeProps
   }
   return result;
 }
-
 Tree.displayName = 'Tree';
-Tree.benchmarkType = BenchmarkType.MOUNT;

@@ -1,10 +1,9 @@
 import { interpolateBuPu, interpolatePurples, interpolateRdPu } from 'd3-scale-chromatic';
-import { BenchmarkType } from '../app/Benchmark';
 import type { SierpinskiTriangleProps } from '../types';
 
 const targetSize = 6;
 
-export default function SierpinskiTriangle({
+export function SierpinskiTriangle({
   components,
   s,
   x,
@@ -73,4 +72,3 @@ export default function SierpinskiTriangle({
 }
 
 SierpinskiTriangle.displayName = 'SierpinskiTriangle';
-SierpinskiTriangle.benchmarkType = BenchmarkType.UPDATE;

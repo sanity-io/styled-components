@@ -1,4 +1,4 @@
-import { startTransition, useRef, useState } from 'react';
+import { useRef, useState, useTransition } from 'react';
 import { flushSync } from 'react-dom';
 import {
   // @ts-expect-error - fix later
@@ -8,110 +8,115 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import type { TestReport, Tests } from '../types';
-import Benchmark2, {
-  BenchmarkProfiler as Benchmark,
-  type BenchmarkRef,
-  type BenchmarkResults,
-} from './Benchmark';
+import type { BenchmarkRef, SafeAny, TestReport, Tests } from '../types';
+import { Benchmark, type BenchmarkResults } from './Benchmark';
+import { BenchmarkProfiler } from './Benchmark/Profiler';
 import { Button } from './Button';
 import { IconClear, IconEye } from './Icons';
 import { Layout } from './Layout';
+import { ProfilerReportCard } from './ProfilerReportCard';
 import { ReportCard } from './ReportCard';
-import { ReportCard2 } from './ReportCard2';
 import { Text } from './Text';
 import { colors } from './theme';
 
 const overlay = <View style={[StyleSheet.absoluteFill, { zIndex: 2 }]} />;
 
-export function App(props: {
-  tests: // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  Tests<any>;
-}) {
+const runnerTypes = [
+  'benchmark',
+  'benchmark-force-layout',
+  'benchmark-profiler',
+  'benchmark-profiler-force-layout',
+  'benchmark-profiler-concurrent',
+  'benchmark-profiler-force-layout-concurrent',
+] as const;
+type RunnerType = (typeof runnerTypes)[number];
+
+function isRunnerType(value: string): value is RunnerType {
+  return runnerTypes.includes(value as RunnerType);
+}
+
+function getForceLayout(runner: RunnerType) {
+  switch (runner) {
+    case 'benchmark-force-layout':
+    case 'benchmark-profiler-force-layout':
+    case 'benchmark-profiler-force-layout-concurrent':
+      return true;
+    default:
+      return false;
+  }
+}
+
+function getRunnerLabel(runner: RunnerType) {
+  switch (runner) {
+    default:
+      return runner;
+  }
+}
+
+function shouldUseBenchmarkProfiler(runner: RunnerType) {
+  switch (runner) {
+    case 'benchmark':
+    case 'benchmark-force-layout':
+      return false;
+    default:
+      return true;
+  }
+}
+
+const timeout = 20_000;
+
+export function App(props: { tests: Tests<React.ComponentType<SafeAny>> }) {
   const { tests } = props;
   const [currentBenchmarkName, setCurrentBenchmarkName] = useState(
     () => Object.keys(props.tests)[0]
   );
+  const [currentBenchmarkRunner, setCurrentBenchmarkRunner] =
+    useState<RunnerType>('benchmark-force-layout');
   const [currentLibraryName, setCurrentLibraryName] = useState('styled-components');
   const [status, setStatus] = useState<'idle' | 'running' | 'complete'>('idle');
   const [results, setResults] = useState<
     (BenchmarkResults & { benchmarkName: string; libraryName: string; libraryVersion?: string })[]
   >([]);
-  const [results2, setResults2] = useState<TestReport[]>([]);
+  const [profilerResults, setProfilerResults] = useState<TestReport[]>([]);
+  const [shouldHideBenchmark, setShouldHideBenchmark] = useState(false);
+  // Loading a new benchmark might take a moment, so we hide the benchmark while it is loading to make it clear it is not ready yet
+  const [pending, startTransition] = useTransition();
 
-  const _benchmarkRef2 = useRef<Benchmark2>(null);
-  const _benchmarkRef = useRef<BenchmarkRef>(null);
-  const _benchWrapperRef = useRef<View>(null);
-  const _scrollRef = useRef<ScrollView>(null);
-  const _shouldHideBenchmark = useRef(false);
+  const isBenchmarkProfiler = shouldUseBenchmarkProfiler(currentBenchmarkRunner);
 
-  const _handleChangeBenchmark = (value: string) => {
+  const forceLayout = getForceLayout(currentBenchmarkRunner);
+
+  const benchmarkRef = useRef<BenchmarkRef>(null);
+  const scrollViewRef = useRef<ScrollView>(null);
+
+  const handleChangeBenchmark = (value: string) => {
     startTransition(() => setCurrentBenchmarkName(value));
   };
-
-  const _handleChangeLibrary = (value: string) => {
+  const handleChangeLibrary = (value: string) => {
     startTransition(() => setCurrentLibraryName(value));
   };
-
-  const _handleStart = () => {
+  const handleStart = () => {
     flushSync(() => {
       setStatus('running');
     });
-    if (_shouldHideBenchmark.current && _benchWrapperRef.current) {
-      _benchWrapperRef.current.setNativeProps({ style: { opacity: 0 } });
-    }
-    _benchmarkRef2.current?.start();
-    _benchmarkRef.current!.start();
+    benchmarkRef.current!.start();
     _scrollToEnd();
   };
-
-  // hide the benchmark as it is performed (no flashing on screen)
-  const _handleVisuallyHideBenchmark = () => {
-    _shouldHideBenchmark.current = !_shouldHideBenchmark.current;
-    if (_benchWrapperRef.current) {
-      _benchWrapperRef.current.setNativeProps({
-        style: { opacity: _shouldHideBenchmark.current ? 0 : 1 },
-      });
-    }
-  };
-
-  const _createHandleComplete2 =
-    ({
-      benchmarkName,
-      libraryName,
-    }: {
-      benchmarkName: string;
-      libraryName: string;
-      sampleCount: number;
-    }) =>
-    (results: TestReport) => {
-      setResults2(state =>
-        state.concat([
-          {
-            ...results,
-            benchmarkName,
-            libraryName,
-            libraryVersion: tests[benchmarkName][libraryName].version,
-          },
-        ])
-      );
-      // setStatus('complete');
-    };
-
   const _handleClear = () => {
     setResults([]);
-    setResults2([]);
+    setProfilerResults([]);
   };
 
   // scroll the most recent result into view
   const _scrollToEnd = () => {
     window.requestAnimationFrame(() => {
-      _scrollRef.current?.scrollToEnd();
+      scrollViewRef.current?.scrollToEnd();
     });
   };
 
   const currentImplementation = tests[currentBenchmarkName][currentLibraryName];
-  const { Component, Provider, getComponentProps, sampleCount } = currentImplementation;
+  const { Component, Provider, getComponentProps, sampleCount, benchmarkType } =
+    currentImplementation;
 
   return (
     <Layout
@@ -124,7 +129,7 @@ export function App(props: {
 
               <Picker
                 enabled={status !== 'running'}
-                onValueChange={_handleChangeLibrary}
+                onValueChange={handleChangeLibrary}
                 selectedValue={currentLibraryName}
                 style={styles.picker}
               >
@@ -139,7 +144,7 @@ export function App(props: {
               <Text testID="current-benchmark-name">{currentBenchmarkName}</Text>
               <Picker
                 enabled={status !== 'running'}
-                onValueChange={_handleChangeBenchmark}
+                onValueChange={handleChangeBenchmark}
                 selectedValue={currentBenchmarkName}
                 style={styles.picker}
                 testID="benchmark-picker"
@@ -149,12 +154,32 @@ export function App(props: {
                 ))}
               </Picker>
             </View>
+            <View style={{ width: 1, backgroundColor: colors.fadedGray }} />
+            <View style={styles.pickerContainer}>
+              <Text style={styles.pickerTitle}>Runner</Text>
+              <Text testID="current-runner">{getRunnerLabel(currentBenchmarkRunner)}</Text>
+              <Picker
+                enabled={status !== 'running'}
+                onValueChange={(value: string) => {
+                  if (isRunnerType(value)) {
+                    setCurrentBenchmarkRunner(value);
+                  }
+                }}
+                selectedValue={currentBenchmarkRunner}
+                style={styles.picker}
+                testID="benchmark-runner-picker"
+              >
+                {runnerTypes.map(runner => (
+                  <Picker.Item key={runner} label={getRunnerLabel(runner)} value={runner} />
+                ))}
+              </Picker>
+            </View>
           </View>
 
           <View style={{ flexDirection: 'row', height: 50 }}>
             <View style={styles.grow}>
               <Button
-                onPress={_handleStart}
+                onPress={handleStart}
                 style={styles.button}
                 title={status === 'running' ? 'Running…' : 'Run'}
                 disabled={status === 'running'}
@@ -176,8 +201,8 @@ export function App(props: {
                 </TouchableOpacity>
               </View>
             </View>
-            <ScrollView ref={_scrollRef} style={styles.grow}>
-              {results2.map((r, i) => (
+            <ScrollView ref={scrollViewRef} style={styles.grow}>
+              {results.map((r, i) => (
                 <ReportCard
                   benchmarkName={r.benchmarkName}
                   key={i}
@@ -191,8 +216,8 @@ export function App(props: {
                   stdDev={r.stdDev}
                 />
               ))}
-              {results.map((r, i) => (
-                <ReportCard2
+              {profilerResults.map((r, i) => (
+                <ProfilerReportCard
                   benchmarkName={r.benchmarkName}
                   key={i}
                   libraryName={r.libraryName}
@@ -213,35 +238,46 @@ export function App(props: {
       viewPanel={
         <View style={styles.viewPanel}>
           <View style={styles.iconEyeContainer}>
-            <TouchableOpacity onPress={_handleVisuallyHideBenchmark}>
+            <TouchableOpacity
+              onPress={() => startTransition(() => setShouldHideBenchmark(prev => !prev))}
+            >
               <IconEye style={styles.iconEye} />
             </TouchableOpacity>
           </View>
-
           <Provider>
-            {status === 'running' ? (
-              <>
-                <View ref={_benchWrapperRef}>
-                  {/* <Benchmark2
-                      // @ts-expect-error - fix later
-                      component={Component}
-                      forceLayout
-                      getComponentProps={getComponentProps}
-                      onComplete={_createHandleComplete2({
-                        sampleCount,
-                        benchmarkName: currentBenchmarkName,
-                        libraryName: currentLibraryName,
-                      })}
-                      ref={_benchmarkRef2}
-                      sampleCount={sampleCount}
-                      timeout={20000}
-                      // @ts-expect-error - fix later
-                      type={Component.benchmarkType}
-                    /> */}
-                  <Benchmark
-                    // @ts-expect-error - fix later
+            <View
+              ref={benchmarkViewRef}
+              // optionally hide the benchmark as it is performed (no flashing on screen), or if it is pending
+              style={{ opacity: pending || shouldHideBenchmark ? 0 : 1 }}
+            >
+              {status === 'running' ? (
+                isBenchmarkProfiler ? (
+                  <BenchmarkProfiler
                     component={Component}
-                    forceLayout
+                    // forceLayout={forceLayout}
+                    getComponentProps={getComponentProps}
+                    onComplete={results => {
+                      setProfilerResults(state =>
+                        state.concat([
+                          {
+                            ...results,
+                            benchmarkName: currentBenchmarkName,
+                            libraryName: currentLibraryName,
+                            libraryVersion: tests[currentBenchmarkName][currentLibraryName].version,
+                          },
+                        ])
+                      );
+                      setStatus('complete');
+                    }}
+                    ref={benchmarkRef}
+                    sampleCount={sampleCount}
+                    timeout={timeout}
+                    type={benchmarkType}
+                  />
+                ) : (
+                  <Benchmark
+                    Component={Component}
+                    forceLayout={forceLayout}
                     getComponentProps={getComponentProps}
                     onComplete={results => {
                       setResults(state =>
@@ -256,17 +292,18 @@ export function App(props: {
                       );
                       setStatus('complete');
                     }}
-                    ref={_benchmarkRef}
+                    ref={ref => {
+                      benchmarkRef.current = ref ? { start: () => ref.start() } : null;
+                    }}
                     sampleCount={sampleCount}
-                    timeout={20000}
-                    // @ts-expect-error - fix later
-                    type={Component.benchmarkType}
+                    timeout={timeout}
+                    type={benchmarkType}
                   />
-                </View>
-              </>
-            ) : (
-              <Component {...getComponentProps({ cycle: 10 })} />
-            )}
+                )
+              ) : (
+                <Component {...getComponentProps({ cycle: 10 })} />
+              )}
+            </View>
           </Provider>
 
           {status === 'running' ? overlay : null}

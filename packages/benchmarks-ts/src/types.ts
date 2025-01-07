@@ -2,6 +2,9 @@
 
 import type React from 'react';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type SafeAny = any;
+
 export type BoxColor = 0 | 1 | 2 | 3 | 4 | 5;
 
 export interface BoxProps {
@@ -37,40 +40,6 @@ export interface Implementation {
   version: string;
 }
 
-/**
- *  benchmarkType: 'mount',
-    Component: Tree,
-    getComponentProps: ({ cycle }) => ({
-      breadth: 2,
-      components,
-      depth: 7,
-      id: cycle,
-      wrap: 1,
-    }),
-    Provider: components.Provider,
-    sampleCount: 500,
-
-     benchmarkType: 'mount',
-    Component: Tree,
-    getComponentProps: ({ cycle }) => ({
-      breadth: 6,
-      components,
-      depth: 3,
-      id: cycle,
-      wrap: 2,
-    }),
-    Provider: components.Provider,
-    sampleCount: 500,
-
-    benchmarkType: 'update',
-    Component: SierpinskiTriangle,
-    getComponentProps: ({ cycle }) => {
-      return { components, renderCount: cycle, s: 200, x: 0, y: 0 };
-    },
-    Provider: components.Provider,
-    sampleCount: 1000,
- */
-
 export interface SierpinskiTriangleProps {
   components: ImplementationComponents;
   depth?: number;
@@ -100,10 +69,9 @@ export interface TestReport {
   runTime?: number;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export interface Test<Props extends Record<string, any> = Record<string, any>> {
-  Component: React.ComponentType<Props>;
-  getComponentProps: (props: { cycle: number }) => Props;
+export interface Test<ComponentType extends React.ComponentType<SafeAny>> {
+  Component: ComponentType;
+  getComponentProps: (props: { cycle: number }) => React.ComponentProps<ComponentType>;
   sampleCount: number;
   Provider: React.ComponentType<ProviderProps>;
   benchmarkType: 'mount' | 'update';
@@ -111,8 +79,16 @@ export interface Test<Props extends Record<string, any> = Record<string, any>> {
   name: string;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type TestBlock<Props extends Record<string, any>> = Record<string, Test<Props>>;
+export type TestBlock<ComponentType extends React.ComponentType<SafeAny>> = Record<
+  string,
+  Test<ComponentType>
+>;
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type Tests<Props extends Record<string, any>> = Record<string, TestBlock<Props>>;
+export type Tests<ComponentType extends React.ComponentType<SafeAny>> = Record<
+  string,
+  TestBlock<ComponentType>
+>;
+
+export interface BenchmarkRef {
+  start: () => void;
+}
