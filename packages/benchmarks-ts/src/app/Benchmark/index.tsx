@@ -9,7 +9,7 @@ import type { SafeAny, Test } from '../../types';
 import { BenchmarkType } from './BenchmarkType';
 import { getMean, getMedian, getStdDev } from './math';
 import * as Timing from './timing';
-import { isDone, shouldRecord, shouldRender, sortNumbers } from './utils';
+import { handleProfileRender, isDone, shouldRecord, shouldRender, sortNumbers } from './utils';
 
 export interface BenchmarkResults {
   startTime: number;
@@ -151,17 +151,8 @@ export class Benchmark extends Component<BenchmarkProps, BenchmarkState> {
     }
     return (
       <Profiler
-        id="benchmark"
-        onRender={(id, phase, actualDuration, baseDuration, startTime, commitTime) => {
-          console.log('OLD onRender', {
-            id,
-            phase,
-            actualDuration,
-            baseDuration,
-            startTime,
-            commitTime,
-          });
-        }}
+        id="cycle"
+        onRender={(...args) => running && shouldRender(cycle, type) && handleProfileRender(...args)}
       >
         {running && shouldRender(cycle, type) ? <Component {...componentProps} /> : null}
       </Profiler>
@@ -255,5 +246,6 @@ export class Benchmark extends Component<BenchmarkProps, BenchmarkState> {
       meanLayout: getMean(sortedLayoutElapsedTimes),
       meanScripting: getMean(sortedScriptingElapsedTimes),
     });
+    window.cody = samples;
   }
 }

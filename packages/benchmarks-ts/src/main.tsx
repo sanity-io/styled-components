@@ -48,7 +48,8 @@ const tests = {
       wrap: 1,
     }),
     Provider: components.Provider,
-    sampleCount: 500,
+    // sampleCount: 500,
+    sampleCount: 1,
   })),
   'Mount wide tree': createTestBlock(Tree, components => ({
     benchmarkType: 'mount',
@@ -60,7 +61,8 @@ const tests = {
       wrap: 2,
     }),
     Provider: components.Provider,
-    sampleCount: 500,
+    // sampleCount: 500,
+    sampleCount: 1,
   })),
   'Update dynamic styles': createTestBlock(SierpinskiTriangle, components => ({
     benchmarkType: 'update',
@@ -72,7 +74,8 @@ const tests = {
       y: 0,
     }),
     Provider: components.Provider,
-    sampleCount: 1000,
+    // sampleCount: 1_000,
+    sampleCount: 1,
   })),
 };
 
@@ -81,3 +84,19 @@ createRoot(document.querySelector('#root')!).render(
     <App tests={tests} />
   </StrictMode>
 );
+
+window.report = (offset: number) => {
+  const results = new Map();
+  for (const result of window.olsen) {
+    if (!results.has(result.commitTime)) results.set(result.commitTime, []);
+    results.get(result.commitTime).push(result);
+  }
+
+  const timeline = [...results.values()].filter(result => result.some(item => item.id === 'cycle'));
+  const start = timeline.at(0).find(t => t.id === 'cycle');
+  const startTime = start.startTime - offset;
+  const report = timeline.map(group =>
+    group.map(item => ({ timestamp: item.startTime - startTime, ...item }))
+  );
+  console.log(report);
+};

@@ -45,3 +45,24 @@ export const isDone = (cycle: number, sampleCount: number, type: string) => {
 };
 
 export const sortNumbers = (a: number, b: number) => a - b;
+
+export const handleProfileRender: React.ProfilerOnRenderCallback = (
+  id,
+  phase,
+  actualDuration,
+  baseDuration,
+  startTime,
+  commitTime
+) => {
+  if (!Array.isArray(window.olsen)) {
+    window.olsen = [];
+  }
+  window.olsen.push({
+    id,
+    phase,
+    actualDuration,
+    baseDuration,
+    startTime,
+    commitTime,
+  });
+};
