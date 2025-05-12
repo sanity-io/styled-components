@@ -1,6 +1,12 @@
 import isPropValid from '@emotion/is-prop-valid';
-import { useInsertionEffectAlwaysWithSyncFallback } from '@emotion/use-insertion-effect-with-fallbacks';
-import React, { createElement, Ref, useDebugValue } from 'react';
+import React, {
+  Ref,
+  useCallback,
+  useDebugValue,
+  useId,
+  useMemo,
+  useSyncExternalStore,
+} from 'react';
 import { IS_BROWSER, SC_VERSION } from '../constants';
 import type {
   AnyComponent,
@@ -66,11 +72,10 @@ function generateId(
 function useInjectedStyle<T extends ExecutionContext>(
   componentStyle: ComponentStyle,
   resolvedAttrs: T
-) {
+): [className: string, insertionEffectBuffer: [name: string, rules: string[]][] | false] {
   const ssc = useStyleSheetContext();
 
-  const insertionEffectBuffer: [name: string, rules: string[]][] | false =
-    !ssc.styleSheet.server && shouldUseInsertionEffect && [];
+  const insertionEffectBuffer: [name: string, rules: string[]][] | false = [];
   const className = componentStyle.generateAndInjectStyles(
     resolvedAttrs,
     ssc.styleSheet,
@@ -80,16 +85,16 @@ function useInjectedStyle<T extends ExecutionContext>(
 
   if (shouldUseInsertionEffect) {
     // eslint-disable-next-line react-hooks/rules-of-hooks
-    useInsertionEffectAlwaysWithSyncFallback(() => {
-      if (Array.isArray(insertionEffectBuffer) && insertionEffectBuffer.length > 0) {
-        componentStyle.flushStyles(insertionEffectBuffer, ssc.styleSheet);
-      }
-    });
+    // useInsertionEffectAlwaysWithSyncFallback(() => {
+    //   if (Array.isArray(insertionEffectBuffer) && insertionEffectBuffer.length > 0) {
+    //     componentStyle.flushStyles(insertionEffectBuffer, ssc.styleSheet);
+    //   }
+    // });
   }
 
   if (process.env.NODE_ENV !== 'production') useDebugValue(className);
 
-  return className;
+  return [className, insertionEffectBuffer];
 }
 
 function resolveContext<Props extends object>(
@@ -156,7 +161,7 @@ function useStyledComponentImpl<Props extends object>(
   const theme = determineTheme(props, contextTheme, defaultProps) || EMPTY_OBJECT;
 
   const context = resolveContext<Props>(componentAttrs, props, theme);
-  const elementToBeCreated: WebTarget = context.as || target;
+  const ElementToBeCreated: WebTarget = context.as || target;
   const propsForElement: Dict<any> = {};
 
   for (const key in context) {
@@ -167,7 +172,7 @@ function useStyledComponentImpl<Props extends object>(
       // Omit transient props and execution props.
     } else if (key === 'forwardedAs') {
       propsForElement.as = context.forwardedAs;
-    } else if (!shouldForwardProp || shouldForwardProp(key, elementToBeCreated)) {
+    } else if (!shouldForwardProp || shouldForwardProp(key, ElementToBeCreated)) {
       propsForElement[key] = context[key];
 
       if (
@@ -176,7 +181,7 @@ function useStyledComponentImpl<Props extends object>(
         !isPropValid(key) &&
         !seenUnknownProps.has(key) &&
         // Only warn on DOM Element.
-        domElements.has(elementToBeCreated as any)
+        domElements.has(ElementToBeCreated as any)
       ) {
         seenUnknownProps.add(key);
         console.warn(
@@ -186,7 +191,11 @@ function useStyledComponentImpl<Props extends object>(
     }
   }
 
-  const generatedClassName = useInjectedStyle(componentStyle, context);
+  const [generatedClassName, styles] = useInjectedStyle(componentStyle, context);
+  const stylesString = useMemo(
+    () => (styles ? styles.map(([name, rules]) => rules).join('\n') : ''),
+    [styles]
+  );
 
   if (process.env.NODE_ENV !== 'production' && forwardedComponent.warnTooManyClasses) {
     forwardedComponent.warnTooManyClasses(generatedClassName);
@@ -202,8 +211,8 @@ function useStyledComponentImpl<Props extends object>(
 
   propsForElement[
     // handle custom elements which React doesn't properly alias
-    isTag(elementToBeCreated) &&
-    !domElements.has(elementToBeCreated as Extract<typeof domElements, string>)
+    isTag(ElementToBeCreated) &&
+    !domElements.has(ElementToBeCreated as Extract<typeof domElements, string>)
       ? 'class'
       : 'className'
   ] = classString;
@@ -215,7 +224,33 @@ function useStyledComponentImpl<Props extends object>(
     propsForElement.ref = forwardedRef;
   }
 
-  return createElement(elementToBeCreated, propsForElement);
+  const testId = useId();
+  const mounted = useSyncExternalStore(
+    useCallback(() => () => {}, []),
+    () => true,
+    () => false
+  );
+
+  useInsertionEffect(() => {
+    if (mounted && Array.isArray(styles) && styles.length > 0) {
+      componentStyle.flushStyles(styles, ssc.styleSheet);
+      // for (const style of document.querySelectorAll(`[data-href^="${styledComponentId}"]`)) {
+      //   console.log('removing the style', style);
+      //   style.remove();
+      // }
+    }
+  }, [mounted, styles]);
+
+  return (
+    <>
+      {!mounted && (
+        <style href={styledComponentId + '-' + hash(stylesString)} precedence="scc">
+          {stylesString}
+        </style>
+      )}
+      <ElementToBeCreated {...propsForElement} />
+    </>
+  );
 }
 
 function createStyledComponent<
@@ -348,3 +383,13 @@ function createStyledComponent<
 }
 
 export default createStyledComponent;
+
+/** Hash a string using the djb2 algorithm. */
+// from: https://github.com/souporserious/restyle/blob/4e71e9aa295803dd3cb47a47e3600a52b68bac38/src/utils.ts#L70C1-L77C2
+function hash(value: string): string {
+  let h = 5381;
+  for (let index = 0, len = value.length; index < len; index++) {
+    h = ((h << 5) + h + value.charCodeAt(index)) >>> 0;
+  }
+  return h.toString(36);
+}

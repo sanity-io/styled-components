@@ -51,4 +51,19 @@ export default class GlobalStyle<Props extends object> {
     this.removeStyles(instance, styleSheet);
     this.createStyles(instance, executionContext, styleSheet, stylis);
   }
+
+  renderCSS(
+    instance: number,
+    executionContext: ExecutionContext & Props,
+    styleSheet: StyleSheet,
+    stylis: Stringifier
+  ) {
+    const flatCSS = joinStringArray(
+      flatten(this.rules as RuleSet<object>, executionContext, styleSheet, stylis) as string[]
+    );
+    const css = stylis(flatCSS, '');
+    const id = this.componentId + instance;
+
+    return { id, css };
+  }
 }

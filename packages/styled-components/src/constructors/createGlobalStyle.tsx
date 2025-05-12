@@ -1,5 +1,4 @@
-import { useInsertionEffectWithLayoutFallback } from '@emotion/use-insertion-effect-with-fallbacks';
-import React from 'react';
+import React, { use, useCallback, useLayoutEffect, useState, useSyncExternalStore } from 'react';
 import { STATIC_EXECUTION_CONTEXT } from '../constants';
 import GlobalStyle from '../models/GlobalStyle';
 import { useStyleSheetContext } from '../models/StyleSheetManager';
@@ -25,10 +24,8 @@ export default function createGlobalStyle<Props extends object>(
 
   const GlobalStyleComponent: React.ComponentType<ExecutionProps & Props> = props => {
     const ssc = useStyleSheetContext();
-    const theme = React.useContext(ThemeContext);
-    const instanceRef = React.useRef(ssc.styleSheet.allocateGSInstance(styledComponentId));
-
-    const instance = instanceRef.current;
+    const theme = use(ThemeContext);
+    const [instance] = useState(() => ssc.styleSheet.allocateGSInstance(styledComponentId));
 
     if (process.env.NODE_ENV !== 'production' && React.Children.count(props.children)) {
       console.warn(
@@ -45,17 +42,46 @@ export default function createGlobalStyle<Props extends object>(
       );
     }
 
+    /**
+     * @TODO maybe do a trick here where we render the <style> during render and hydration,
+     * but after mounting, during useInsertionEffect, we remove/replace it with the new one
+     * since react doesn't unmount <style> elements that uses `href` and `precedence`
+     */
+
     if (ssc.styleSheet.server) {
       renderStyles(instance, props, ssc.styleSheet, theme, ssc.stylis);
     }
 
-    if (!__SERVER__) {
-      useInsertionEffectWithLayoutFallback(() => {
-        if (!ssc.styleSheet.server) {
-          renderStyles(instance, props, ssc.styleSheet, theme, ssc.stylis);
-          return () => globalStyle.removeStyles(instance, ssc.styleSheet);
+    const mounted = useSyncExternalStore(
+      useCallback(() => () => {}, []),
+      () => true,
+      () => false
+    );
+
+    // if (!__SERVER__) {
+    useLayoutEffect(() => {
+      if (mounted) {
+        renderStyles(instance, props, ssc.styleSheet, theme, ssc.stylis);
+        for (const style of document.querySelectorAll(`[data-href^="${styledComponentId}"]`)) {
+          console.log('removing the style', style);
+          style.remove();
         }
-      }, [instance, props, ssc.styleSheet, theme, ssc.stylis]);
+        return () => globalStyle.removeStyles(instance, ssc.styleSheet);
+      }
+    }, [instance, props, ssc.styleSheet, theme, ssc.stylis, mounted]);
+    // }
+
+    if (!mounted) {
+      const context = {
+        ...props,
+        theme: determineTheme(props, theme, GlobalStyleComponent.defaultProps),
+      } as ExecutionContext & Props;
+      const { id, css } = globalStyle.renderCSS(instance, context, ssc.styleSheet, ssc.stylis);
+      return (
+        <style href={styledComponentId + '-' + hash(css.join(''))} precedence="scg">
+          {css.join('')}
+        </style>
+      );
     }
 
     return null;
@@ -86,4 +112,14 @@ export default function createGlobalStyle<Props extends object>(
   }
 
   return React.memo(GlobalStyleComponent);
+}
+
+/** Hash a string using the djb2 algorithm. */
+// from: https://github.com/souporserious/restyle/blob/4e71e9aa295803dd3cb47a47e3600a52b68bac38/src/utils.ts#L70C1-L77C2
+function hash(value: string): string {
+  let h = 5381;
+  for (let index = 0, len = value.length; index < len; index++) {
+    h = ((h << 5) + h + value.charCodeAt(index)) >>> 0;
+  }
+  return h.toString(36);
 }

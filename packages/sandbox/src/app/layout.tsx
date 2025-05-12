@@ -1,5 +1,6 @@
+'use client';
+
 import styled, { createGlobalStyle } from 'styled-components';
-import ButtonExample from '../src/Button.example';
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -64,21 +65,23 @@ const Code = styled.span`
   border-radius: 0.2em;
 `;
 
-const App = () => (
-  <Body>
-    <GlobalStyle />
-    <Heading>
-      <Title>
-        Interactive sandbox for <Code>styled-components</Code>
-      </Title>
-      <Subtitle>
-        Make changes to the files in <Code>./src</Code> and see them take effect in realtime!
-      </Subtitle>
-    </Heading>
-    <Content>
-      <ButtonExample />
-    </Content>
-  </Body>
-);
-
-export default App;
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html>
+      <body>
+        <GlobalStyle />
+        <Body>
+          <Heading>
+            <Title>
+              Interactive sandbox for <Code>styled-components</Code>
+            </Title>
+            <Subtitle>
+              Make changes to the files in <Code>./src</Code> and see them take effect in realtime!
+            </Subtitle>
+          </Heading>
+          <Content>{children}</Content>
+        </Body>
+      </body>
+    </html>
+  );
+}
