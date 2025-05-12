@@ -1,13 +1,7 @@
 import isPropValid from '@emotion/is-prop-valid';
-import React, {
-  Ref,
-  useCallback,
-  useDebugValue,
-  useId,
-  useMemo,
-  useSyncExternalStore,
-} from 'react';
+import React, { Ref, useCallback, useDebugValue, useSyncExternalStore } from 'react';
 import { IS_BROWSER, SC_VERSION } from '../constants';
+import StyleSheet from '../sheet';
 import type {
   AnyComponent,
   Attrs,
@@ -39,6 +33,7 @@ import { joinStrings } from '../utils/joinStrings';
 import merge from '../utils/mixinDeep';
 import { setToString } from '../utils/setToString';
 import ComponentStyle from './ComponentStyle';
+import ServerStyleSheet from './ServerStyleSheet';
 import { useStyleSheetContext } from './StyleSheetManager';
 import { DefaultTheme, ThemeContext } from './ThemeProvider';
 
@@ -71,6 +66,7 @@ function generateId(
 
 function useInjectedStyle<T extends ExecutionContext>(
   componentStyle: ComponentStyle,
+  styleSheet: StyleSheet,
   resolvedAttrs: T
 ): [className: string, insertionEffectBuffer: [name: string, rules: string[]][] | false] {
   const ssc = useStyleSheetContext();
@@ -78,7 +74,7 @@ function useInjectedStyle<T extends ExecutionContext>(
   const insertionEffectBuffer: [name: string, rules: string[]][] | false = [];
   const className = componentStyle.generateAndInjectStyles(
     resolvedAttrs,
-    ssc.styleSheet,
+    styleSheet,
     ssc.stylis,
     insertionEffectBuffer
   );
@@ -191,10 +187,17 @@ function useStyledComponentImpl<Props extends object>(
     }
   }
 
-  const [generatedClassName, styles] = useInjectedStyle(componentStyle, context);
-  const stylesString = useMemo(
-    () => (styles ? styles.map(([name, rules]) => rules.join('')).join('') : ''),
-    [styles]
+  const mounted = useSyncExternalStore(
+    useCallback(() => () => {}, []),
+    () => true,
+    () => false
+  );
+
+  const sheet = new ServerStyleSheet();
+  const [generatedClassName, styles] = useInjectedStyle(
+    componentStyle,
+    mounted ? ssc.styleSheet : sheet.instance,
+    context
   );
 
   if (process.env.NODE_ENV !== 'production' && forwardedComponent.warnTooManyClasses) {
@@ -224,13 +227,6 @@ function useStyledComponentImpl<Props extends object>(
     propsForElement.ref = forwardedRef;
   }
 
-  const testId = useId();
-  const mounted = useSyncExternalStore(
-    useCallback(() => () => {}, []),
-    () => true,
-    () => false
-  );
-
   useInsertionEffect(() => {
     if (mounted && Array.isArray(styles) && styles.length > 0) {
       componentStyle.flushStyles(styles, ssc.styleSheet);
@@ -241,16 +237,23 @@ function useStyledComponentImpl<Props extends object>(
     }
   }, [mounted, styles]);
 
-  return (
-    <>
-      {!mounted && (
-        <style href={styledComponentId + '-' + hash(stylesString)} precedence="scc">
-          {stylesString}
+  const children = <ElementToBeCreated {...propsForElement} />;
+
+  if (!mounted && Array.isArray(styles)) {
+    // const sheet = new ServerStyleSheet();
+    componentStyle.flushStyles(styles, sheet.instance);
+    const css = sheet.instance.toString();
+    return (
+      <>
+        <style href={styledComponentId + '-' + hash(css)} precedence="scc">
+          {css}
         </style>
-      )}
-      <ElementToBeCreated {...propsForElement} />
-    </>
-  );
+        {children}
+      </>
+    );
+  }
+
+  return children;
 }
 
 function createStyledComponent<

@@ -13,9 +13,19 @@ import {
   useSyncExternalStore,
   unstable_ViewTransition as ViewTransition,
 } from 'react';
-import styled, { createGlobalStyle, css } from 'styled-components';
+import styled, { createGlobalStyle, css, keyframes } from 'styled-components';
 
-const Button = styled.button<{ $primary?: boolean }>`
+const rotate = keyframes`
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+`;
+
+const Button = styled.button<{ $primary?: boolean; $spin?: boolean }>`
   font-size: 16px;
   border-radius: 5px;
   padding: 0.25em 1em;
@@ -30,6 +40,12 @@ const Button = styled.button<{ $primary?: boolean }>`
     css`
       background: palevioletred;
       color: white;
+    `};
+
+  ${props =>
+    props.$spin &&
+    css`
+      animation: ${rotate} 500ms linear infinite;
     `};
 `;
 
@@ -49,6 +65,7 @@ export default function ButtonExample() {
   );
   const [primary, setPrimary] = useState(false);
   const [background, setBackground] = useState(false);
+  const [spin, setSpin] = useState(true);
   return (
     <>
       <label>
@@ -61,7 +78,7 @@ export default function ButtonExample() {
       </label>
 
       <ViewTransition>
-        <Button $primary={primary} onClick={() => alert('Clicked!')}>
+        <Button $primary={primary} $spin={spin} onClick={() => alert('Clicked!')}>
           Button
         </Button>
       </ViewTransition>
@@ -74,6 +91,9 @@ export default function ButtonExample() {
       <label>
         <input type="checkbox" checked={background} onChange={() => setBackground(prev => !prev)} />{' '}
         Toggle background
+      </label>
+      <label>
+        <input type="checkbox" checked={spin} onChange={() => setSpin(prev => !prev)} /> Toggle spin
       </label>
     </>
   );
