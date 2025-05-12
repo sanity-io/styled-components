@@ -1,6 +1,6 @@
 {
-  "name": "styled-components",
-  "version": "6.1.14",
+  "name": "@sanity/styled-components",
+  "version": "0.0.0-experimental.2",
   "description": "CSS for the <Component> Age. Style components your way with speed, strong typing, and flexibility.",
   "publishConfig": {
     "access": "public"
@@ -16,9 +16,9 @@
   "sideEffects": false,
   "scripts": {
     "generateErrors": "node scripts/generateErrorMap.js",
-    "prebuild": "rimraf dist && yarn run generateErrors",
+    "prebuilds": "rimraf dist && yarn run generateErrors",
     "build": "rollup -c",
-    "postbuild": "yarn run size",
+    "postbuilds": "yarn run size",
     "pretest": "yarn run generateErrors",
     "test": "yarn run test:web && yarn run test:native",
     "test:web": "jest -c jest.config.main.js",
@@ -27,7 +27,7 @@
     "size": "bundlewatch",
     "prettier": "prettier src --write",
     "prettier:check": "prettier src --check",
-    "prepublishOnly": "cp ../../README.md . && yarn run build"
+    "prepublishOnlys": "cp ../../README.md . && yarn run build"
   },
   "repository": {
     "type": "git",
