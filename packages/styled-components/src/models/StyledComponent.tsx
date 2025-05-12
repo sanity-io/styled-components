@@ -193,7 +193,7 @@ function useStyledComponentImpl<Props extends object>(
 
   const [generatedClassName, styles] = useInjectedStyle(componentStyle, context);
   const stylesString = useMemo(
-    () => (styles ? styles.map(([name, rules]) => rules).join('') : ''),
+    () => (styles ? styles.map(([name, rules]) => rules.join('')).join('') : ''),
     [styles]
   );
 

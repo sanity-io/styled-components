@@ -1,6 +1,6 @@
 {
   "name": "@sanity/styled-components",
-  "version": "0.0.0-experimental.2",
+  "version": "0.0.0-experimental.3",
   "description": "CSS for the <Component> Age. Style components your way with speed, strong typing, and flexibility.",
   "publishConfig": {
     "access": "public"
