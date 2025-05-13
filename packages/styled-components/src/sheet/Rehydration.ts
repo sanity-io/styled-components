@@ -48,7 +48,7 @@ const rehydrateNamesFromContent = (sheet: Sheet, id: string, content: string) =>
   }
 };
 
-const rehydrateSheetFromTag = (sheet: Sheet, style: HTMLStyleElement) => {
+export const rehydrateSheetFromTag = (sheet: Sheet, style: HTMLStyleElement) => {
   const parts = (style.textContent ?? '').split(SPLITTER);
   const rules: string[] = [];
 
@@ -87,6 +87,7 @@ export const rehydrateSheet = (sheet: Sheet) => {
       rehydrateSheetFromTag(sheet, node);
 
       if (node.parentNode) {
+        console.log('rehydrateSheet: removing the style', node);
         node.parentNode.removeChild(node);
       }
     }

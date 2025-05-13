@@ -5,6 +5,7 @@ const config: NextConfig = {
   experimental: { viewTransition: true },
   env: {
     SC_DISABLE_SPEEDY: 'false',
+    // REACT_APP_SC_ATTR: 'data-href',
   },
 };
 

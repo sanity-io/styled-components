@@ -9,6 +9,7 @@ export const SC_ATTR: string =
 
 export const SC_ATTR_ACTIVE = 'active';
 export const SC_ATTR_VERSION = 'data-styled-version';
+// export const SC_ATTR_VERSION = 'data-precedence';
 export const SC_VERSION = __VERSION__;
 export const SPLITTER = '/*!sc*/\n';
 

@@ -2,6 +2,7 @@ import isPropValid from '@emotion/is-prop-valid';
 import React, { Ref, useCallback, useDebugValue, useSyncExternalStore } from 'react';
 import { IS_BROWSER, SC_VERSION } from '../constants';
 import StyleSheet from '../sheet';
+import { rehydrateSheetFromTag } from '../sheet/Rehydration';
 import type {
   AnyComponent,
   Attrs,
@@ -229,6 +230,12 @@ function useStyledComponentImpl<Props extends object>(
 
   useInsertionEffect(() => {
     if (mounted && Array.isArray(styles) && styles.length > 0) {
+      for (const style of document.querySelectorAll(`[data-href*="${styledComponentId}"]`)) {
+        rehydrateSheetFromTag(ssc.styleSheet, style as HTMLStyleElement);
+        console.log('removing the style', style);
+        style.remove();
+      }
+
       componentStyle.flushStyles(styles, ssc.styleSheet);
       // for (const style of document.querySelectorAll(`[data-href^="${styledComponentId}"]`)) {
       //   console.log('removing the style', style);
@@ -245,7 +252,12 @@ function useStyledComponentImpl<Props extends object>(
     const css = sheet.instance.toString();
     return (
       <>
-        <style href={styledComponentId + '-' + hash(css)} precedence="scc">
+        <style
+          href={styledComponentId + '-' + hash(css)}
+          // precedence="scc"
+          // precedence={SC_VERSION}
+          precedence="sc"
+        >
           {css}
         </style>
         {children}

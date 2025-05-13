@@ -4,6 +4,7 @@ import GlobalStyle from '../models/GlobalStyle';
 import { useStyleSheetContext } from '../models/StyleSheetManager';
 import { DefaultTheme, ThemeContext } from '../models/ThemeProvider';
 import StyleSheet from '../sheet';
+import { rehydrateSheetFromTag } from '../sheet/Rehydration';
 import { ExecutionContext, ExecutionProps, Interpolation, Stringifier, Styles } from '../types';
 import { checkDynamicCreation } from '../utils/checkDynamicCreation';
 import determineTheme from '../utils/determineTheme';
@@ -61,11 +62,14 @@ export default function createGlobalStyle<Props extends object>(
     // if (!__SERVER__) {
     useLayoutEffect(() => {
       if (mounted) {
-        renderStyles(instance, props, ssc.styleSheet, theme, ssc.stylis);
-        for (const style of document.querySelectorAll(`[data-href^="${styledComponentId}"]`)) {
+        for (const style of document.querySelectorAll(`[data-href*="${styledComponentId}"]`)) {
+          rehydrateSheetFromTag(ssc.styleSheet, style as HTMLStyleElement);
           console.log('removing the style', style);
           style.remove();
         }
+
+        renderStyles(instance, props, ssc.styleSheet, theme, ssc.stylis);
+
         return () => globalStyle.removeStyles(instance, ssc.styleSheet);
       }
     }, [instance, props, ssc.styleSheet, theme, ssc.stylis, mounted]);
@@ -78,7 +82,7 @@ export default function createGlobalStyle<Props extends object>(
       } as ExecutionContext & Props;
       const { id, css } = globalStyle.renderCSS(instance, context, ssc.styleSheet, ssc.stylis);
       return (
-        <style href={styledComponentId + '-' + hash(css.join(''))} precedence="scg">
+        <style href={styledComponentId + '-' + hash(css.join(''))} precedence="sc">
           {css.join('')}
         </style>
       );
