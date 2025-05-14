@@ -11,6 +11,7 @@
     "next": "canary"
   },
   "dependencies": {
+    "@sanity/ui": "2.15.17",
     "react": "experimental",
     "react-dom": "experimental",
     "styled-components": "workspace:*"

@@ -1,10 +1,10 @@
-import React, { use, useCallback, useLayoutEffect, useState, useSyncExternalStore } from 'react';
+import React, { use, useCallback, useInsertionEffect, useSyncExternalStore } from 'react';
+import { ServerStyleSheet } from '../base';
 import { STATIC_EXECUTION_CONTEXT } from '../constants';
 import GlobalStyle from '../models/GlobalStyle';
 import { useStyleSheetContext } from '../models/StyleSheetManager';
 import { DefaultTheme, ThemeContext } from '../models/ThemeProvider';
 import StyleSheet from '../sheet';
-import { rehydrateSheetFromTag } from '../sheet/Rehydration';
 import { ExecutionContext, ExecutionProps, Interpolation, Stringifier, Styles } from '../types';
 import { checkDynamicCreation } from '../utils/checkDynamicCreation';
 import determineTheme from '../utils/determineTheme';
@@ -26,7 +26,10 @@ export default function createGlobalStyle<Props extends object>(
   const GlobalStyleComponent: React.ComponentType<ExecutionProps & Props> = props => {
     const ssc = useStyleSheetContext();
     const theme = use(ThemeContext);
-    const [instance] = useState(() => ssc.styleSheet.allocateGSInstance(styledComponentId));
+    // const [instance] = useState(() => ssc.styleSheet.allocateGSInstance(styledComponentId));
+    const instanceRef = React.useRef(ssc.styleSheet.allocateGSInstance(styledComponentId));
+
+    const instance = instanceRef.current;
 
     if (process.env.NODE_ENV !== 'production' && React.Children.count(props.children)) {
       console.warn(
@@ -43,49 +46,83 @@ export default function createGlobalStyle<Props extends object>(
       );
     }
 
-    /**
-     * @TODO maybe do a trick here where we render the <style> during render and hydration,
-     * but after mounting, during useInsertionEffect, we remove/replace it with the new one
-     * since react doesn't unmount <style> elements that uses `href` and `precedence`
-     */
-
-    if (ssc.styleSheet.server) {
-      renderStyles(instance, props, ssc.styleSheet, theme, ssc.stylis);
-    }
-
-    const mounted = useSyncExternalStore(
+    const isHydrating = useSyncExternalStore(
       useCallback(() => () => {}, []),
-      () => true,
-      () => false
+      () => false,
+      () => true
     );
 
     // if (!__SERVER__) {
-    useLayoutEffect(() => {
-      if (mounted) {
+    useInsertionEffect(() => {
+      if (!isHydrating) {
+        const remove = [] as HTMLStyleElement[];
         for (const style of document.querySelectorAll(`[data-href*="${styledComponentId}"]`)) {
-          rehydrateSheetFromTag(ssc.styleSheet, style as HTMLStyleElement);
-          console.log('removing the style', style);
-          style.remove();
+          // for (const style of document.querySelectorAll(`[data-precedence="sc"]`)) {
+          // rehydrateSheetFromTag(ssc.styleSheet, style as HTMLStyleElement);
+          // console.log('rehydrating the style', style);
+          remove.push(style as HTMLStyleElement);
         }
 
         renderStyles(instance, props, ssc.styleSheet, theme, ssc.stylis);
+        for (const style of remove) {
+          console.log('removing the rehydrated style', style);
+          style.remove();
+        }
 
         return () => globalStyle.removeStyles(instance, ssc.styleSheet);
       }
-    }, [instance, props, ssc.styleSheet, theme, ssc.stylis, mounted]);
+    }, [instance, props, ssc.styleSheet, theme, ssc.stylis, isHydrating]);
     // }
 
-    if (!mounted) {
+    if (isHydrating) {
+      const sheet = new ServerStyleSheet();
+      // const styleSheet = IS_BROWSER ? sheet.instance : ssc.styleSheet;
+      // renderStyles(instance, props, styleSheet, theme, ssc.stylis);
+      // renderStyles(instance, props, ssc.styleSheet, theme, ssc.stylis);
       const context = {
         ...props,
         theme: determineTheme(props, theme, GlobalStyleComponent.defaultProps),
       } as ExecutionContext & Props;
-      const { id, css } = globalStyle.renderCSS(instance, context, ssc.styleSheet, ssc.stylis);
-      return (
-        <style href={styledComponentId + '-' + hash(css.join(''))} precedence="sc">
-          {css.join('')}
-        </style>
+      const { id, css } = globalStyle.renderCSS(
+        instance,
+        context,
+        sheet.instance,
+        // ssc.styleSheet,
+        ssc.stylis
       );
+
+      return (
+        <>
+          <style href={styledComponentId + '-' + hash(css.join(''))} precedence="scg">
+            {css.join('')}
+          </style>
+          <style href="sc" precedence="sc"></style>
+        </>
+      );
+      // const css = outputSheetModern(styleSheet);
+      // const css = outputSheetModern(ssc.styleSheet);
+      // globalStyle.removeStyles(instance, styleSheet);
+      // console.log('css', css);
+      // return (
+      //   <>
+      //     {css.map(([i, cssRules]) => {
+      //       const href = hash(cssRules);
+      //       return (
+      //         <style
+      //           key={href}
+      //           href={href}
+      //           // href={styledComponentId + '-' + hash(cssRules)}
+      //           // precedence="scc"
+      //           // precedence={SC_VERSION}
+      //           // precedence="sc"
+      //           precedence={`sc:${i}`}
+      //         >
+      //           {cssRules}
+      //         </style>
+      //       );
+      //     })}
+      //   </>
+      // );
     }
 
     return null;
@@ -99,6 +136,7 @@ export default function createGlobalStyle<Props extends object>(
     stylis: Stringifier
   ) {
     if (globalStyle.isStatic) {
+      console.log('render static global style');
       globalStyle.renderStyles(
         instance,
         STATIC_EXECUTION_CONTEXT as unknown as ExecutionContext & Props,
@@ -106,6 +144,7 @@ export default function createGlobalStyle<Props extends object>(
         stylis
       );
     } else {
+      console.log('render dynamic global style');
       const context = {
         ...props,
         theme: determineTheme(props, theme, GlobalStyleComponent.defaultProps),

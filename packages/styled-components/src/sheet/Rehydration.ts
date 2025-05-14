@@ -37,6 +37,39 @@ export const outputSheet = (sheet: Sheet) => {
   return css;
 };
 
+// @TODO add methods for extracting css that is for the current component, and what is not
+export const outputSheetModern = (sheet: Sheet) => {
+  const tag = sheet.getTag();
+  const { length } = tag;
+
+  let css: [id: string, css: string][] = [];
+  for (let group = 0; group < length; group++) {
+    const id = getIdForGroup(group);
+    if (id === undefined) continue;
+
+    const names = sheet.names.get(id);
+    const rules = tag.getGroup(group);
+    if (names === undefined || !names.size || rules.length === 0) continue;
+
+    const selector = `${SC_ATTR}.g${group}[id="${id}"]`;
+
+    let content = '';
+    if (names !== undefined) {
+      names.forEach(name => {
+        if (name.length > 0) {
+          content += `${name},`;
+        }
+      });
+    }
+
+    // NOTE: It's easier to collect rules and have the marker
+    // after the actual rules to simplify the rehydration
+    css.push([id, `${rules}${selector}{content:"${content}"}${SPLITTER}`]);
+  }
+
+  return css;
+};
+
 const rehydrateNamesFromContent = (sheet: Sheet, id: string, content: string) => {
   const names = content.split(',');
   let name;

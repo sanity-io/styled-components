@@ -2,7 +2,7 @@ import isPropValid from '@emotion/is-prop-valid';
 import React, { Ref, useCallback, useDebugValue, useSyncExternalStore } from 'react';
 import { IS_BROWSER, SC_VERSION } from '../constants';
 import StyleSheet from '../sheet';
-import { rehydrateSheetFromTag } from '../sheet/Rehydration';
+import { outputSheetModern, rehydrateSheetFromTag } from '../sheet/Rehydration';
 import type {
   AnyComponent,
   Attrs,
@@ -193,13 +193,15 @@ function useStyledComponentImpl<Props extends object>(
     () => true,
     () => false
   );
+  const isHydrating = useSyncExternalStore(
+    useCallback(() => () => {}, []),
+    () => false,
+    () => true
+  );
 
   const sheet = new ServerStyleSheet();
-  const [generatedClassName, styles] = useInjectedStyle(
-    componentStyle,
-    mounted ? ssc.styleSheet : sheet.instance,
-    context
-  );
+  const styleSheet = isHydrating && IS_BROWSER ? sheet.instance : ssc.styleSheet;
+  const [generatedClassName, styles] = useInjectedStyle(componentStyle, styleSheet, context);
 
   if (process.env.NODE_ENV !== 'production' && forwardedComponent.warnTooManyClasses) {
     forwardedComponent.warnTooManyClasses(generatedClassName);
@@ -230,10 +232,14 @@ function useStyledComponentImpl<Props extends object>(
 
   useInsertionEffect(() => {
     if (mounted && Array.isArray(styles) && styles.length > 0) {
-      for (const style of document.querySelectorAll(`[data-href*="${styledComponentId}"]`)) {
+      // for (const style of document.querySelectorAll(`[data-href*="${styledComponentId}"]`)) {
+      const remove = [] as HTMLStyleElement[];
+      for (const style of document.querySelectorAll(`[data-precedence^="sc"]`)) {
+        if (style.hasAttribute('data-rehydrated')) continue;
         rehydrateSheetFromTag(ssc.styleSheet, style as HTMLStyleElement);
-        console.log('removing the style', style);
-        style.remove();
+        style.setAttribute('data-rehydrated', 'true');
+        console.log('rehydrating the style', style);
+        // remove.push(style as HTMLStyleElement);
       }
 
       componentStyle.flushStyles(styles, ssc.styleSheet);
@@ -241,6 +247,10 @@ function useStyledComponentImpl<Props extends object>(
       //   console.log('removing the style', style);
       //   style.remove();
       // }
+      for (const style of remove) {
+        console.log('removing the rehydrated style', style);
+        style.remove();
+      }
     }
   }, [mounted, styles]);
 
@@ -248,19 +258,70 @@ function useStyledComponentImpl<Props extends object>(
 
   if (!mounted && Array.isArray(styles)) {
     // const sheet = new ServerStyleSheet();
-    componentStyle.flushStyles(styles, sheet.instance);
-    const css = sheet.instance.toString();
+    // const sheet = new ServerStyleSheet();
+    componentStyle.flushStyles(styles, styleSheet);
+    // componentStyle.flushStyles(styles, sheet.instance);
+    // const css = styleSheet.toString();
+    const css = outputSheetModern(styleSheet);
+    // const css = outputSheetModern(sheet.instance);
+
+    // const componentCss = css
+    //   .filter(([id]) => classString.split(' ').includes(id))
+    //   .map(([, css]) => css)
+    //   .join();
+    // const componentHash = hash(componentCss);
+    // const componentId = hash(classString);
+
+    // sort by i
     return (
       <>
-        <style
+        {children}
+        <style href="scg" precedence="scg"></style>
+        {/* <style
           href={styledComponentId + '-' + hash(css)}
           // precedence="scc"
           // precedence={SC_VERSION}
           precedence="sc"
         >
           {css}
-        </style>
-        {children}
+        </style> */}
+        {css.map(([id, cssRules]) => {
+          // if (foldedComponentIds.split(' ').includes(id)) return null;
+          const href = hash(cssRules);
+          // console.log({
+          //   classString,
+          //   id,
+          //   foldedComponentIds,
+          //   styledComponentId,
+          //   generatedClassName,
+          //   'context.className': context.className,
+          // });
+          return (
+            <style
+              key={href}
+              href={href}
+              // href={styledComponentId + '-' + hash(cssRules)}
+              // precedence="scc"
+              // precedence={SC_VERSION}
+              precedence="sc"
+              // precedence={`sc:${i}`}
+            >
+              {cssRules}
+            </style>
+          );
+        })}
+        {/* <style
+          key={componentHash}
+          href={componentHash}
+          // href={styledComponentId + '-' + hash(cssRules)}
+          // precedence="scc"
+          // precedence={SC_VERSION}
+          // precedence="scl"
+          // precedence={`sc:${i}`}
+          precedence={componentId}
+        >
+          {componentCss}
+        </style> */}
       </>
     );
   }

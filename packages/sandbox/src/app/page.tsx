@@ -64,32 +64,42 @@ export default function ButtonExample() {
     () => false
   );
   const [primary, setPrimary] = useState(false);
-  const [background, setBackground] = useState(false);
+  const [background, setBackground] = useState(true);
   const [spin, setSpin] = useState(true);
   return (
     <>
-      <label>
-        <input
-          type="checkbox"
-          checked={primary}
-          onChange={() => startTransition(() => setPrimary(prev => !prev))}
-        />{' '}
-        Toggle primary
-      </label>
+      <ViewTransition>
+        <label>
+          <input
+            type="checkbox"
+            checked={primary}
+            onChange={() => startTransition(() => setPrimary(prev => !prev))}
+          />{' '}
+          Toggle primary
+        </label>
+      </ViewTransition>
 
       <ViewTransition>
         <Button $primary={primary} $spin={spin} onClick={() => alert('Clicked!')}>
           Button
         </Button>
       </ViewTransition>
-
-      <Activity mode={background ? 'visible' : 'hidden'}>
-        {/* {background && <RedBackground $primary={primary} />} */}
-        <RedBackground $primary={primary} />
+      <Activity mode={primary ? 'visible' : 'hidden'}>
+        <ViewTransition>
+          <Button $primary={primary} $spin={spin} onClick={() => alert('Clicked!')}>
+            Button
+          </Button>
+        </ViewTransition>
         <Debug />
       </Activity>
+
+      {background && <RedBackground $primary={primary} />}
       <label>
-        <input type="checkbox" checked={background} onChange={() => setBackground(prev => !prev)} />{' '}
+        <input
+          type="checkbox"
+          checked={background}
+          onChange={() => startTransition(() => setBackground(prev => !prev))}
+        />{' '}
         Toggle background
       </label>
       <label>

@@ -1,6 +1,10 @@
 'use client';
 
+import { Container, ThemeProvider } from '@sanity/ui';
+import { buildTheme } from '@sanity/ui/theme';
 import styled, { createGlobalStyle } from 'styled-components';
+
+const theme = buildTheme();
 
 const GlobalStyle = createGlobalStyle`
   body {
@@ -79,7 +83,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               Make changes to the files in <Code>./src</Code> and see them take effect in realtime!
             </Subtitle>
           </Heading>
-          <Content>{children}</Content>
+          <ThemeProvider theme={theme}>
+            <Container paddingY={6} paddingX={[3, 4, 5]} sizing="border">
+              <Content>{children}</Content>
+            </Container>
+          </ThemeProvider>
         </Body>
       </body>
     </html>
